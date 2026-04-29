@@ -1897,10 +1897,117 @@ const CONFIG_HTML = `<!DOCTYPE html>
   }
   .sub-panel-actions {
     display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-    margin-top: 28px; padding-top: 20px; border-top: 1px solid #e5e0d6;
+    margin-top: 36px; padding-top: 24px; border-top: 1px solid #f0ebe0;
   }
   .sub-panel-actions .hint {
-    font-size: 12px; color: #6b6b6b; margin-left: auto;
+    font-size: 12px; color: #9a9385; margin-left: auto;
+  }
+  /* Sub-tab icons */
+  .sub-tab {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 7px !important;
+  }
+  .sub-tab svg { flex-shrink: 0; }
+  /* Premium share cards */
+  .share-card {
+    background: white;
+    border: 1px solid #e5e0d6;
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .share-card:hover {
+    border-color: #d8d2c2;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 6px 18px -8px rgba(15,23,42,0.08);
+  }
+  .share-card-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .share-card-head strong {
+    font-size: 15px; color: #1a1a1a; font-weight: 600;
+  }
+  .share-badge {
+    background: linear-gradient(180deg, #c9a961, #b89752);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    box-shadow: 0 1px 2px rgba(201,169,97,0.3);
+  }
+  .share-tag {
+    font-size: 11px;
+    color: #9a9385;
+    font-weight: 500;
+  }
+  .share-desc {
+    font-size: 13px;
+    color: #6b6b6b;
+    margin: 0 0 12px;
+    line-height: 1.55;
+  }
+  .share-input-row {
+    display: flex; gap: 6px; align-items: stretch;
+  }
+  .share-input-row input {
+    flex: 1;
+    padding: 10px 14px !important;
+    border: 1px solid #e5e0d6 !important;
+    border-radius: 8px !important;
+    font-family: ui-monospace, "SF Mono", monospace !important;
+    font-size: 12px !important;
+    background: #faf7f2 !important;
+    color: #1a1a1a;
+  }
+  .share-input-row input:focus {
+    background: white !important;
+    border-color: #c9a961 !important;
+  }
+  /* Wizard nav at bottom of each step */
+  .wizard-nav {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin-top: 36px; padding-top: 24px; border-top: 1px solid #f0ebe0;
+  }
+  .wizard-nav button.next {
+    background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+    color: white;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: auto;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      0 1px 2px rgba(0,0,0,0.1),
+      0 6px 16px -4px rgba(0,0,0,0.2);
+  }
+  .wizard-nav button.next:hover:not(:disabled) {
+    background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.12),
+      0 2px 4px rgba(0,0,0,0.12),
+      0 12px 24px -4px rgba(0,0,0,0.25);
+  }
+  .wizard-nav button.prev {
+    background: white;
+    color: #6b6b6b;
+    border: 1px solid #e5e0d6;
+    padding: 11px 18px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .wizard-nav button.prev:hover:not(:disabled) {
+    background: #faf7f2;
+    color: #1a1a1a;
+  }
+  .wizard-nav .step-meta {
+    font-size: 12px;
+    color: #9a9385;
+    font-weight: 500;
   }
   .submissions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
   .sub-card { background: white; border: 1px solid #e5e0d6; border-radius: 8px; overflow: hidden; }
@@ -1963,46 +2070,36 @@ const CONFIG_HTML = `<!DOCTYPE html>
       <div id="scopeBadge" style="display:inline-block; margin-left:auto; padding:4px 10px; border-radius:12px; font-size:12px; background:#eef4ff; color:#2a4a8a;"></div>
     </div>
 
-    <div id="shareBox" style="display:none; margin-bottom:20px; padding:18px; background:linear-gradient(135deg,#fdfbf6,#f5efe2); border:1px solid #e5e0d6; border-radius:8px;">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-        <strong style="font-size:14px;">Share & embed this funnel</strong>
-        <span id="shareLabel" style="font-size:12px; color:#6b6b6b;"></span>
-      </div>
-      <p style="font-size: 12px; color: #6b6b6b; margin: 0 0 14px;">Two ways to use your own domain. The iframe (option 1) is the easiest — works on any site, any domain, zero DNS work.</p>
-      <div style="margin-bottom:14px;">
-        <label style="display:block; font-size:12px; color:#1a1a1a; margin-bottom:4px; font-weight:600;">⭐ Option 1 — Iframe embed (works on any domain instantly)</label>
-        <p style="font-size: 12px; color: #6b6b6b; margin: 0 0 6px;">Paste into any HTML / Custom Code block on your site (GHL, Webflow, WordPress, Squarespace, ClickFunnels, Carrd, anywhere). Your domain shows in the URL bar — no DNS setup needed.</p>
-        <div style="display:flex; gap:6px;">
-          <input id="shareIframe" type="text" readonly style="flex:1; padding:8px 10px; border:1px solid #e5e0d6; border-radius:4px; font-family:monospace; font-size:12px; background:white;">
-          <button onclick="copyShare('shareIframe', this)" class="secondary" style="white-space:nowrap;">Copy</button>
-        </div>
-      </div>
-      <div style="margin-bottom:14px;">
-        <label style="display:block; font-size:12px; color:#1a1a1a; margin-bottom:4px; font-weight:600;">Option 2 — Direct shareable URL</label>
-        <p style="font-size: 12px; color: #6b6b6b; margin: 0 0 6px;">Send this link directly via email / SMS / DM. Updates to use your custom domain automatically when one is set.</p>
-        <div style="display:flex; gap:6px;">
-          <input id="shareUrl" type="text" readonly style="flex:1; padding:8px 10px; border:1px solid #e5e0d6; border-radius:4px; font-family:monospace; font-size:12px; background:white;">
-          <button onclick="copyShare('shareUrl', this)" class="secondary" style="white-space:nowrap;">Copy</button>
-        </div>
-      </div>
-      <div>
-        <label style="display:block; font-size:12px; color:#1a1a1a; margin-bottom:4px; font-weight:600;">Option 3 — Short link (compact, easy to remember)</label>
-        <p style="font-size: 12px; color: #6b6b6b; margin: 0 0 6px;">Tiny URL that redirects to this funnel. Auto-generated and persistent — same short link every time.</p>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input id="shareShort" type="text" readonly placeholder="Loading…" style="flex:1; padding:8px 10px; border:1px solid #e5e0d6; border-radius:4px; font-family:monospace; font-size:12px; background:white;">
-          <button onclick="copyShare('shareShort', this)" class="secondary" style="white-space:nowrap;">Copy</button>
-          <button onclick="regenerateShortLink()" id="shortLinkBtn" class="secondary" style="white-space:nowrap; padding:8px 10px; font-size:12px;" title="Generate a new short code (invalidates the old one)">↻</button>
-        </div>
-      </div>
-    </div>
 
   <div class="sub-tabs">
-    <button class="sub-tab active" data-subtab="style" onclick="switchSubTab('style')">🎨 Style</button>
-    <button class="sub-tab" data-subtab="welcome" onclick="switchSubTab('welcome')">👋 Welcome</button>
-    <button class="sub-tab" data-subtab="questions" onclick="switchSubTab('questions')">❓ Questions</button>
-    <button class="sub-tab" data-subtab="thankyou" onclick="switchSubTab('thankyou')">🙏 Thank-you</button>
-    <button class="sub-tab" data-subtab="buttons" onclick="switchSubTab('buttons')">🔘 Buttons</button>
-    <button class="sub-tab" data-subtab="settings" onclick="switchSubTab('settings')">⚙️ Settings</button>
+    <button class="sub-tab active" data-subtab="style" onclick="switchSubTab('style')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+      Style
+    </button>
+    <button class="sub-tab" data-subtab="welcome" onclick="switchSubTab('welcome')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      Welcome
+    </button>
+    <button class="sub-tab" data-subtab="questions" onclick="switchSubTab('questions')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Questions
+    </button>
+    <button class="sub-tab" data-subtab="thankyou" onclick="switchSubTab('thankyou')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Thank-you
+    </button>
+    <button class="sub-tab" data-subtab="buttons" onclick="switchSubTab('buttons')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="9" width="20" height="6" rx="3"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/></svg>
+      Buttons
+    </button>
+    <button class="sub-tab" data-subtab="settings" onclick="switchSubTab('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </button>
+    <button class="sub-tab" data-subtab="share" onclick="switchSubTab('share')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Share
+    </button>
   </div>
 
   <div class="layout">
@@ -2055,11 +2152,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
         </div>
       </div>
 
-      <div class="sub-panel-actions">
-        <button onclick="save()">💾 Save changes</button>
-        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
-        <span class="hint">Changes apply within 30 seconds</span>
-      </div>
+      <div class="wizard-nav"></div>
       </div><!-- /sub-panel style -->
 
       <div class="sub-panel" data-sub="welcome">
@@ -2085,11 +2178,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
         <div class="field"><label>Intro CTA button label</label><input type="text" data-key="getStartedLabel" placeholder="Get started"><div class="field-preview" data-preview-for="getStartedLabel"></div></div>
         <div class="preview-block" id="previewWelcome"></div>
       </div>
-      <div class="sub-panel-actions">
-        <button onclick="save()">💾 Save changes</button>
-        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
-        <span class="hint">Changes apply within 30 seconds</span>
-      </div>
+      <div class="wizard-nav"></div>
       </div><!-- /sub-panel welcome -->
 
       <div class="sub-panel" data-sub="thankyou">
@@ -2103,11 +2192,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
         <div class="field"><label>Redirect button URL</label><input type="text" data-key="thankYouButtonUrl" placeholder="https://yoursite.com/free-gift"></div>
         <div class="preview-block" id="previewThankYou"></div>
       </div>
-      <div class="sub-panel-actions">
-        <button onclick="save()">💾 Save changes</button>
-        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
-        <span class="hint">Changes apply within 30 seconds</span>
-      </div>
+      <div class="wizard-nav"></div>
       </div><!-- /sub-panel thankyou -->
 
       <div class="sub-panel" data-sub="buttons">
@@ -2138,11 +2223,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
           <div class="field-preview" data-preview-for="switchToVideoLabel"></div>
         </div>
       </div>
-      <div class="sub-panel-actions">
-        <button onclick="save()">💾 Save changes</button>
-        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
-        <span class="hint">Changes apply within 30 seconds</span>
-      </div>
+      <div class="wizard-nav"></div>
       </div><!-- /sub-panel buttons -->
 
       <div class="sub-panel" data-sub="questions">
@@ -2152,11 +2233,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
         <div id="questionsContainer"></div>
         <div class="preview-block" id="previewQuestions"></div>
       </div>
-      <div class="sub-panel-actions">
-        <button onclick="save()">💾 Save changes</button>
-        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
-        <span class="hint">Changes apply within 30 seconds</span>
-      </div>
+      <div class="wizard-nav"></div>
       </div><!-- /sub-panel questions -->
 
       <div class="sub-panel" data-sub="settings">
@@ -2194,12 +2271,61 @@ const CONFIG_HTML = `<!DOCTYPE html>
         <input type="hidden" data-key="customDomain">
       </div>
 
-      <div class="sub-panel-actions">
-        <button onclick="save()">💾 Save changes</button>
-        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
-        <span class="hint">Changes apply within 30 seconds</span>
-      </div>
+      <div class="wizard-nav"></div>
       </div><!-- /sub-panel settings -->
+
+      <div class="sub-panel" data-sub="share">
+      <p class="sub-panel-hint">All set — here are the three ways to put StokeReel in front of your customers. Pick the one that fits your funnel.</p>
+
+      <div class="section">
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Share &amp; embed this funnel
+        </h2>
+        <p class="help-text" id="shareLabel" style="margin: 0 0 16px;"></p>
+
+        <div class="share-option" id="shareBox" style="display:none;">
+          <div class="share-card">
+            <div class="share-card-head">
+              <span class="share-badge">Recommended</span>
+              <strong>Iframe embed</strong>
+            </div>
+            <p class="share-desc">Copy this snippet and paste it into a page on your website. The recorder will appear on your page like it was always part of it. Works with every website builder — your visitors stay on your site and never see ours.</p>
+            <div class="share-input-row">
+              <input id="shareIframe" type="text" readonly>
+              <button onclick="copyShare('shareIframe', this)" class="secondary">Copy</button>
+            </div>
+          </div>
+
+          <div class="share-card">
+            <div class="share-card-head">
+              <strong>Direct shareable URL</strong>
+            </div>
+            <p class="share-desc">Send via email, SMS, DM, or any text-based channel. Auto-uses your custom domain if one is set.</p>
+            <div class="share-input-row">
+              <input id="shareUrl" type="text" readonly>
+              <button onclick="copyShare('shareUrl', this)" class="secondary">Copy</button>
+            </div>
+          </div>
+
+          <div class="share-card">
+            <div class="share-card-head">
+              <strong>Short link</strong>
+              <span class="share-tag">Persistent — same code every time</span>
+            </div>
+            <p class="share-desc">Tiny URL that redirects to this funnel. Best for printed materials, SMS, or anywhere character count matters.</p>
+            <div class="share-input-row">
+              <input id="shareShort" type="text" readonly placeholder="Loading…">
+              <button onclick="copyShare('shareShort', this)" class="secondary">Copy</button>
+              <button onclick="regenerateShortLink()" id="shortLinkBtn" class="secondary" title="Generate a new short code (invalidates the old one)" style="padding: 9px 12px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wizard-nav"></div>
+      </div><!-- /sub-panel share -->
 
     </div><!-- /panel -->
 
@@ -3102,6 +3228,9 @@ function populateForm(config) {
   renderQuestions();
   refreshLogoPreview();
   renderCustomDomainCard();
+  // Render the wizard nav for whichever sub-tab is currently active
+  const activeTab = document.querySelector(".sub-tab.active");
+  if (activeTab) renderWizardNav(activeTab.dataset.subtab);
 }
 
 function renderQuestions() {
@@ -3426,11 +3555,79 @@ function switchTab(name) {
   if (name === "submissions") loadSubmissions();
 }
 
+const SUB_TAB_ORDER = ["style", "welcome", "questions", "thankyou", "buttons", "settings", "share"];
+const SUB_TAB_LABELS = {
+  style: "Style",
+  welcome: "Welcome",
+  questions: "Questions",
+  thankyou: "Thank-you",
+  buttons: "Buttons",
+  settings: "Settings",
+  share: "Share"
+};
+
+function renderWizardNav(activeName) {
+  const idx = SUB_TAB_ORDER.indexOf(activeName);
+  const isFirst = idx === 0;
+  const isLast = idx === SUB_TAB_ORDER.length - 1;
+  const prevName = !isFirst ? SUB_TAB_ORDER[idx - 1] : null;
+  const nextName = !isLast ? SUB_TAB_ORDER[idx + 1] : null;
+  const stepText = "Step " + (idx + 1) + " of " + SUB_TAB_ORDER.length;
+
+  document.querySelectorAll(".sub-panel").forEach(panel => {
+    const nav = panel.querySelector(".wizard-nav");
+    if (!nav) return;
+    const panelName = panel.dataset.sub;
+    if (panelName !== activeName) return;
+
+    let html = "";
+    if (prevName) {
+      html += '<button class="prev" onclick="prevSubTab()">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="vertical-align:middle; margin-right:4px;"><polyline points="15 18 9 12 15 6"/></svg>' +
+        'Back: ' + escapeHtml(SUB_TAB_LABELS[prevName]) +
+        '</button>';
+    } else {
+      html += '<button class="prev" disabled style="visibility:hidden;">Back</button>';
+    }
+    html += '<span class="step-meta">' + escapeHtml(stepText) + '</span>';
+    if (isLast) {
+      html += '<button class="next" onclick="nextSubTab()">Save &amp; finish ✓</button>';
+    } else {
+      html += '<button class="next" onclick="nextSubTab()">Save &amp; next: ' + escapeHtml(SUB_TAB_LABELS[nextName]) +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="vertical-align:middle; margin-left:6px;"><polyline points="9 18 15 12 9 6"/></svg>' +
+        '</button>';
+    }
+    nav.innerHTML = html;
+  });
+}
+
 function switchSubTab(name) {
   document.querySelectorAll(".sub-tab").forEach(t => t.classList.toggle("active", t.dataset.subtab === name));
   document.querySelectorAll(".sub-panel").forEach(p => p.classList.toggle("active", p.dataset.sub === name));
-  // Scroll to top so customer immediately sees the section + its preview
+  renderWizardNav(name);
+  // Update share box visibility / load short link when arriving at Share
+  if (name === "share") updateShareBox();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function nextSubTab() {
+  const current = document.querySelector(".sub-tab.active");
+  if (!current) return;
+  const idx = SUB_TAB_ORDER.indexOf(current.dataset.subtab);
+  if (idx === -1) return;
+  await save(); // save before navigating forward
+  if (idx < SUB_TAB_ORDER.length - 1) {
+    switchSubTab(SUB_TAB_ORDER[idx + 1]);
+  } else {
+    toast("All set — your StokeReel is configured.");
+  }
+}
+
+function prevSubTab() {
+  const current = document.querySelector(".sub-tab.active");
+  if (!current) return;
+  const idx = SUB_TAB_ORDER.indexOf(current.dataset.subtab);
+  if (idx > 0) switchSubTab(SUB_TAB_ORDER[idx - 1]);
 }
 
 function openPreview() {
