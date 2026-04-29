@@ -32,7 +32,7 @@ import LANDING_HTML from "./landing.html";
 // this against UPSTREAM_VERSION_URL to detect when an update is available.
 // Use semantic versioning (MAJOR.MINOR.PATCH).
 // --------------------------------------------------------------
-const STOKEREEL_VERSION = "1.4.1";
+const STOKEREEL_VERSION = "1.4.2";
 const UPSTREAM_VERSION_URL = "https://testimonials.michaelrochin.workers.dev/version";
 
 // --------------------------------------------------------------

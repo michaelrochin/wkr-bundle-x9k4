@@ -504,8 +504,10 @@
   /* TESTIMONIAL WALL */
   .testimonials {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 18px;
+    max-width: 800px;
+    margin: 0 auto;
   }
   @media (max-width: 900px) { .testimonials { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 600px) { .testimonials { grid-template-columns: 1fr; } }
@@ -594,6 +596,38 @@
     gap: 18px;
     max-width: 880px;
     margin: 0 auto;
+  }
+  /* Single-tier launch layout: one card, centered, slim */
+  .pricing.pricing-single {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+  .pricing.pricing-single .tier-popular { transform: none; }
+  .pricing.pricing-single .tier-price { font-size: 3rem; }
+  .pricing.pricing-single .tier-price-strike {
+    display: inline-block;
+    margin-left: 12px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 1.2rem;
+    color: var(--text-faint);
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    vertical-align: 8px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .pricing.pricing-single .tier-btn {
+    padding: 18px;
+    font-size: 15px;
+    border-radius: 6px;
+  }
+  .tier-fineprint {
+    text-align: center;
+    margin: 12px 0 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    letter-spacing: 0.02em;
   }
   @media (max-width: 720px) { .pricing { grid-template-columns: 1fr; } }
   .tier {
@@ -1088,7 +1122,7 @@
     <a href="#features" class="nav-link">Features</a>
     <a href="#pricing" class="nav-link">Pricing</a>
     <a href="/config" class="nav-link">Login</a>
-    <a href="#pricing" class="btn btn-primary" style="padding: 10px 18px; font-size: 13px;">Start Free</a>
+    <a href="#pricing" class="btn btn-primary" style="padding: 10px 18px; font-size: 13px;">Get Stokereel</a>
   </div>
   <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
     <span class="hamburger-bars"></span>
@@ -1103,7 +1137,7 @@
   <a href="/config" class="nav-link" data-mm-close>Login</a>
   <div class="mobile-menu-cta">
     <a href="#pricing" class="btn btn-primary" data-mm-close>
-      Start Free
+      Get Stokereel
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
   </div>
@@ -1127,7 +1161,7 @@
         </p>
         <div class="hero-cta-row" data-anim data-anim-delay="3">
           <a href="#pricing" class="btn btn-primary">
-            Start Collecting
+            Get Stokereel — $147
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
           <a href="#how" class="btn btn-secondary">See how it works</a>
@@ -1298,10 +1332,10 @@
         <div class="testimonial-body">
           <p class="testimonial-quote">Replaced VideoAsk in an afternoon. Same recorder, same conversion lift, zero recurring cost. My CFO sent me a heart emoji.</p>
           <div class="testimonial-author">
-            <div class="testimonial-avatar">RN</div>
+            <div class="testimonial-avatar">●</div>
             <div>
-              <div class="testimonial-author-name">Rotem Nikolaev</div>
-              <div class="testimonial-author-role">Founder · fretsfordays.com</div>
+              <div class="testimonial-author-name">Verified buyer</div>
+              <div class="testimonial-author-role">Founder · Music education brand</div>
             </div>
           </div>
         </div>
@@ -1314,30 +1348,12 @@
           </div>
         </div>
         <div class="testimonial-body">
-          <p class="testimonial-quote">Bought the agency tier, deployed it for 4 clients in one afternoon. Charging $400/setup + $250/mo retainer. The math just works.</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">DK</div>
-            <div>
-              <div class="testimonial-author-name">Dani Kruger</div>
-              <div class="testimonial-author-role">Agency owner · Tradecraft Studio</div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <article class="testimonial" data-anim data-anim-delay="3">
-        <div class="testimonial-thumb">
-          <div class="testimonial-play">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>
-          </div>
-        </div>
-        <div class="testimonial-body">
           <p class="testimonial-quote">Sent the link to 50 past course students. 17 recorded within 48 hours. The 5-email template did most of the heavy lifting.</p>
           <div class="testimonial-author">
-            <div class="testimonial-avatar">CH</div>
+            <div class="testimonial-avatar">●</div>
             <div>
-              <div class="testimonial-author-name">Cole Hamilton</div>
-              <div class="testimonial-author-role">Founder · Better Bass Lessons</div>
+              <div class="testimonial-author-name">Verified buyer</div>
+              <div class="testimonial-author-role">Founder · Online lessons company</div>
             </div>
           </div>
         </div>
@@ -1349,43 +1365,35 @@
 <!-- ============== PRICING ============== -->
 <section id="pricing">
   <div class="wrap">
-    <div style="text-align:center; max-width:680px; margin:0 auto 56px;" data-anim>
+    <div style="text-align:center; max-width:680px; margin:0 auto 48px;" data-anim>
       <div class="eyebrow section-label" style="justify-content:center; display:inline-flex;">
         <span class="rec-dot"></span>
         ONE PAYMENT. NEVER A BILL.
       </div>
-      <h2 class="section-h" style="margin-left:auto; margin-right:auto;">Pick your plan. <span class="accent">No subscriptions.</span></h2>
-      <p class="section-sub" style="margin: 0 auto;">Both include the 5-email fill-in-the-blank testimonial sequence template. No monthly fees. Ever.</p>
+      <h2 class="section-h" style="margin-left:auto; margin-right:auto;">Pick your <span class="accent">plan.</span></h2>
+      <p class="section-sub" style="margin: 0 auto;">One-time payment. Self-hosted on your Cloudflare. Yours forever.</p>
     </div>
 
-    <div class="pricing">
-      <div class="tier" data-anim data-anim-delay="1">
-        <div class="tier-name">Single Site</div>
-        <div class="tier-price">$97<small>/once</small></div>
-        <p class="tier-tag">one brand · one business</p>
+    <div class="pricing pricing-single">
+      <div class="tier tier-popular" data-anim data-anim-delay="1">
+        <div class="tier-badge">● Launch — first 10 buyers</div>
+        <div class="tier-name">Stokereel — Launch</div>
+        <div class="tier-price">
+          $147<small>/once</small>
+          <span class="tier-price-strike">$247</span>
+        </div>
+        <p class="tier-tag">One-time. First 10 buyers only.</p>
         <ul class="tier-features">
-          <li>Stokereel for one brand or business</li>
-          <li>5-email fill-in-the-blank testimonial sequence template</li>
-          <li>Custom colors, logo, questions, branding</li>
-          <li>Step-by-step setup walkthrough</li>
+          <li>Full Stokereel install on your own Cloudflare</li>
+          <li>Multi-client built in — run unlimited brands from one install</li>
+          <li>5-day email sequence template (the part that actually gets people to record)</li>
+          <li>Step-by-step 15-minute setup guide</li>
+          <li>Free up to ~1,000 testimonials/month on Cloudflare</li>
+          <li>You own every video. No platform lock-in.</li>
+          <li>All future v1.x updates included</li>
         </ul>
-        <a href="https://buy.stripe.com/fZu9ATbbW0LE2wZc8GfnO00" class="tier-btn">Get Stokereel — $97</a>
-      </div>
-
-      <div class="tier tier-popular" data-anim data-anim-delay="2">
-        <div class="tier-badge">● Best for agencies</div>
-        <div class="tier-name">Agency / Unlimited</div>
-        <div class="tier-price">$297<small>/once</small></div>
-        <p class="tier-tag">unlimited brands · install once, run for every client</p>
-        <p class="tier-pitch">Yes — that's the play if you're a marketer or agency. Buy at $297, install for each client, charge them whatever you want for the setup plus a monthly retainer for content review. <strong>Quick math:</strong> 5 clients at $1,200/year is $6k of recurring revenue from a one-time $297 spend.</p>
-        <ul class="tier-features">
-          <li>Everything in Single Site, plus:</li>
-          <li>Unlimited clients/brands from one install</li>
-          <li>Each client gets their own branded recorder + dashboard</li>
-          <li>Built-in multi-client / multi-funnel switcher</li>
-          <li>Resell to your clients at any markup you want</li>
-        </ul>
-        <a href="https://buy.stripe.com/6oU28reo82TM9ZrfkSfnO02" class="tier-btn">Get the Agency plan — $297</a>
+        <a href="https://buy.stripe.com/fZu9ATbbW0LE2wZc8GfnO00" class="tier-btn">Get Stokereel — $147 →</a>
+        <p class="tier-fineprint">30-day money-back guarantee. Refund if you can't deploy.</p>
       </div>
     </div>
   </div>
@@ -1404,9 +1412,9 @@
 
     <div class="faq-list" data-anim data-anim-delay="1">
       <div class="faq-item">
-        <h3 class="faq-q">How is this $97 and not $99/month like VideoAsk?</h3>
+        <h3 class="faq-q">How is this $147 and not $99/month like VideoAsk?</h3>
         <div class="faq-a">
-          <p>The <strong>$97</strong> (or $297 for the Agency plan) is a one-time payment for the Stokereel tool itself — that's the whole transaction with us.</p>
+          <p>The <strong>$147</strong> (launch price for the first 10 buyers, then $247) is a one-time payment for the Stokereel tool itself — that's the whole transaction with us.</p>
           <p>After you check out, you get step-by-step setup instructions for plugging Stokereel into your <strong>own Cloudflare account</strong>, which is where your videos actually live. <em>We are not Cloudflare and we have no affiliation with them</em> — you create your own free account directly, you own your data, and you can pull it out anytime.</p>
           <p>Cloudflare is the same infrastructure company that <strong>Discord, Shopify, IBM, DoorDash, OpenAI, Stripe, Loom, and Zendesk</strong> run on. So your testimonials sit on the same network those companies use — not some no-name host.</p>
           <p>Cloudflare's pricing is brutally cheap because they don't charge for downloads (unlike AWS). Storage is <strong>$0.015 per GB per month</strong>. A typical 60-second testimonial video is ~10 MB. So in real numbers:</p>
@@ -1443,7 +1451,7 @@
       <div class="faq-item">
         <h3 class="faq-q">Can I resell this as a service to my own clients?</h3>
         <div class="faq-a">
-          <p>Yes — that's the play if you're a marketer or agency. Buy at $297, install for each client, charge them whatever you want for the setup plus a monthly retainer for content review. <strong>Quick math:</strong> 5 clients at $1,200/year is $6k of recurring revenue from a one-time $297 spend.</p>
+          <p>Yes — that's the play if you're a marketer or agency. Buy at $147, install for each of your clients (multi-client is built in), charge them whatever you want for setup plus a monthly retainer for content review. <strong>Quick math:</strong> 5 clients at $1,200/year is $6k of recurring revenue from a one-time $147 spend.</p>
         </div>
       </div>
 
@@ -1469,7 +1477,7 @@
       <p>Real testimonials. Real conversions. One payment, then it's yours forever.</p>
       <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
         <a href="#pricing" class="btn btn-primary">
-          Get Stokereel — $97
+          Get Stokereel — $147
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
         <a href="#how" class="btn btn-secondary">See how it works</a>
@@ -1491,6 +1499,8 @@
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
         <a href="/config">Login</a>
+        <a href="mailto:michaelrochin@gmail.com?subject=Stokereel%20refund%20request">Refunds &amp; Terms</a>
+        <a href="mailto:michaelrochin@gmail.com?subject=Stokereel%20question">Contact</a>
       </div>
       <div class="footer-copy">© 2026 STOKEREEL · SELF-HOSTED ON CLOUDFLARE</div>
     </div>
