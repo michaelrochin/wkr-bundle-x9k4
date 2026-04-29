@@ -369,7 +369,7 @@ function serveHostedRecorder(origin, client, course) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Share your story</title>
+<title>Share your story · StokeReel</title>
 ${inject}
 </head>
 <body style="margin:0;padding:24px 0;background:#faf7f2;">
@@ -930,7 +930,7 @@ const ADMIN_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Testimonials</title>
+<title>StokeReel · Testimonials</title>
 <style>
   :root {
     --cream: #faf7f2;
@@ -1168,7 +1168,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Testimonials Dashboard</title>
+<title>StokeReel · Dashboard</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -1300,8 +1300,8 @@ const CONFIG_HTML = `<!DOCTYPE html>
 <div id="app" style="display:none;">
   <div class="top-bar">
     <div>
-      <h1>Dashboard</h1>
-      <p class="sub" id="tabSub">Customize branding or watch testimonials, all in one place.</p>
+      <h1>StokeReel</h1>
+      <p class="sub" id="tabSub">Customize branding or watch your stoked customers — all in one place.</p>
     </div>
     <div class="controls">
       <select id="clientName" style="padding:8px 10px; border:1px solid #e5e0d6; border-radius:4px; min-width:180px;">
@@ -2403,7 +2403,7 @@ const SETUP_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>First-time setup</title>
+<title>StokeReel · First-time setup</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -2455,8 +2455,8 @@ const SETUP_HTML = `<!DOCTYPE html>
 </div>
 
 <div class="card" id="setupCard" style="display:none;">
-  <h1>Welcome — let's set this up</h1>
-  <p class="sub">5 minutes. You'll need a free Cloudflare account and one R2 API token.</p>
+  <h1>Welcome to StokeReel</h1>
+  <p class="sub">5 minutes to set up. You'll need a free Cloudflare account and one R2 API token.</p>
 
   <div class="step">
     <span class="step-num">1</span>

@@ -5,7 +5,7 @@
 # The difference: no hardcoded account_id, no specific bucket name override —
 # Cloudflare auto-creates the bucket and uses the authenticated user's account.
 
-name = "testimonials"
+name = "stokereel"
 main = "worker.js"
 compatibility_date = "2024-12-01"
 
@@ -13,7 +13,7 @@ compatibility_date = "2024-12-01"
 # Cloudflare auto-creates this on first deploy if it doesn't exist.
 [[r2_buckets]]
 binding = "BUCKET"
-bucket_name = "testimonials"
+bucket_name = "stokereel"
 
 # Allow `import recorderHtml from "./recorder.html"` in worker.js
 [[rules]]

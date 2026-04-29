@@ -1,8 +1,12 @@
-# Video Testimonial Recorder
+# StokeReel
 
-A self-hosted VideoAsk alternative. Embeds on any page. Records video in the browser, uploads to Cloudflare R2.
+Capture your most stoked customers on video.
 
-**Cost:** free for ~10GB of testimonials (Cloudflare R2 free tier + Workers free tier).
+A self-hosted video testimonial collector. Embeds on any page or runs as a hosted URL. Records video in the browser, uploads to Cloudflare R2, never charges a SaaS bill.
+
+**Cost:** free for ~10GB of testimonials (Cloudflare R2 free tier + Workers free tier). About $1.50/month at 100GB. Bandwidth is unmetered.
+
+**Site:** [stokereel.com](https://stokereel.com)
 
 ---
 
