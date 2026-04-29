@@ -1518,6 +1518,19 @@ const CONFIG_HTML = `<!DOCTYPE html>
 
       <div class="sub-panel" data-sub="welcome">
       <p class="sub-panel-hint">The first thing people see. Get this right and they'll hit record.</p>
+
+      <div class="section">
+        <h2>🆕 Start from a template (optional)</h2>
+        <p class="help-text" style="margin: 0 0 12px;">Pre-fill the welcome message + 3 questions for your business type. You can edit anything after.</p>
+        <div class="field" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <select id="contentPresetSelect" style="flex:1; min-width:260px; padding:10px 12px; border:1px solid #e5e0d6; border-radius:6px; font-size:14px; font-family: inherit;">
+            <option value="">— Start blank —</option>
+          </select>
+          <button onclick="applyContentPreset()" id="applyPresetBtn" disabled>Use this template</button>
+        </div>
+        <p class="help-text" id="contentPresetDescription" style="margin: 10px 0 0; display:none; padding:10px 12px; background:#fdfbf6; border-left:3px solid #c9a961; border-radius:4px; line-height:1.5;"></p>
+      </div>
+
       <div class="section">
         <h2>Welcome page</h2>
         <div class="field"><label>Headline</label><input type="text" data-key="headline"></div>
@@ -1878,6 +1891,177 @@ function slugify(s) { return (s || "").toLowerCase().replace(/[^a-z0-9-]+/g, "-"
 
 const NEW_OPTION = "__add_new__";
 
+// Content presets — pre-fill welcome message + 3 questions per business type.
+// Reduces blank-page friction for first-time users.
+const CONTENT_PRESETS = [
+  {
+    id: "coach-transformation",
+    label: "Coach / Course (transformation story)",
+    description: "Best for course creators, coaches, and educators. Pulls out the before/after arc that sells.",
+    welcome: {
+      title: "Share your story :)",
+      subtitle: 'Three quick questions in one short video. Hit record, answer them one after another, tap "Next question" as you go.'
+    },
+    questions: [
+      { text: "What were you struggling with before you joined?", helper: "What was actually frustrating you?" },
+      { text: "What's the biggest thing that's changed for you?", helper: "Be specific — what shifted, what's different now?" },
+      { text: "What would you tell someone who's on the fence?", helper: "Imagine a friend asked if they should buy. What would you say?" }
+    ]
+  },
+  {
+    id: "saas-problem-solution",
+    label: "SaaS / Software (problem → solution)",
+    description: "For tools and software. Frames the testimonial around switching, ROI, and who should use it.",
+    welcome: {
+      title: "Tell us how it's going :)",
+      subtitle: 'Three quick questions in one short video. Hit record, answer them one after another, tap "Next question" as you go.'
+    },
+    questions: [
+      { text: "What were you using (or not using) before you found us?", helper: "What was the workaround that wasn't working?" },
+      { text: "What changed once you started using it?", helper: "Time saved, headaches gone, results — whatever stands out." },
+      { text: "Who should try this?", helper: "Picture the person this would help most. Describe them." }
+    ]
+  },
+  {
+    id: "service-referral",
+    label: "Service Business (referral-focused)",
+    description: "For agencies, consultants, contractors, freelancers. Designed to generate word-of-mouth language.",
+    welcome: {
+      title: "Quick favor :)",
+      subtitle: 'Three quick questions in one short video. Hit record, answer them one after another, tap "Next question" as you go.'
+    },
+    questions: [
+      { text: "What made you decide to hire us in the first place?", helper: "What were you weighing? What tipped the scales?" },
+      { text: "What surprised you about working with us?", helper: "Something you didn't expect — good or unexpected." },
+      { text: "Who do you know who needs this?", helper: "Picture them in your head. What's their situation?" }
+    ]
+  },
+  {
+    id: "quick-endorsement",
+    label: "Quick & Casual (low friction)",
+    description: "Two short questions for when you just need warm bodies on camera. Highest completion rate.",
+    welcome: {
+      title: "Got 30 seconds? :)",
+      subtitle: "Two quick questions, one short video. Hit record and just talk like you're texting a friend."
+    },
+    questions: [
+      { text: "What do you love about it?", helper: "First thing that comes to mind. Don't overthink it." },
+      { text: "What would you tell a friend about us?", helper: "Real talk — how would you describe this to someone you know?" }
+    ]
+  },
+  {
+    id: "sales-page-objections",
+    label: "Sales Page (objection crusher)",
+    description: "Surgically designed for sales pages. Gets buyers naming the exact fears your future buyers have.",
+    welcome: {
+      title: "Help future buyers :)",
+      subtitle: 'Three quick questions in one short video. Hit record, answer them one after another, tap "Next question" as you go.'
+    },
+    questions: [
+      { text: "What almost stopped you from buying?", helper: "The doubt, the price, the timing — what made you hesitate?" },
+      { text: "What convinced you to pull the trigger?", helper: "What flipped the switch from 'maybe' to 'yes'?" },
+      { text: "Was it worth it?", helper: "Looking back now — would you do it again?" }
+    ]
+  },
+  {
+    id: "ecommerce-product",
+    label: "Ecommerce / Physical Product",
+    description: "For physical goods. Captures product quality, real-world use, and recommendation language.",
+    welcome: {
+      title: "How's it holding up? :)",
+      subtitle: 'Three quick questions in one short video. Hit record, answer them one after another, tap "Next question" as you go.'
+    },
+    questions: [
+      { text: "What were you looking for when you found us?", helper: "What problem were you trying to solve? What had you tried?" },
+      { text: "How's the product been so far?", helper: "Quality, how you use it, anything that stood out." },
+      { text: "Would you recommend it? To who?", helper: "Who's the kind of person this would be perfect for?" }
+    ]
+  },
+  {
+    id: "local-business",
+    label: "Local / Brick-and-mortar",
+    description: "For restaurants, gyms, salons, shops. Captures vibe, staff, and repeat-customer energy.",
+    welcome: {
+      title: "Tell us about your visit :)",
+      subtitle: 'Three quick questions in one short video. Hit record, answer them one after another, tap "Next question" as you go.'
+    },
+    questions: [
+      { text: "What brought you in the first time?", helper: "How'd you hear about us? What were you hoping for?" },
+      { text: "What keeps you coming back?", helper: "The food, the people, the vibe — what is it?" },
+      { text: "Who have you told about us?", helper: "Anyone you've mentioned us to lately?" }
+    ]
+  },
+  {
+    id: "wellness-health",
+    label: "Health & Wellness",
+    description: "For coaches, gyms, supplements, therapy, programs. Emotional + physical transformation language.",
+    welcome: {
+      title: "Share where you're at :)",
+      subtitle: 'Three quick questions in one short video. Hit record, answer them one after another, tap "Next question" as you go.'
+    },
+    questions: [
+      { text: "Where were you at when you started?", helper: "How were you feeling? What wasn't working?" },
+      { text: "What's different now?", helper: "Physically, mentally, day-to-day — what's changed?" },
+      { text: "What would you tell someone who's hesitating?", helper: "Someone in the spot you used to be in. What would you say?" }
+    ]
+  }
+];
+
+function populateContentPresets() {
+  const sel = document.getElementById("contentPresetSelect");
+  if (!sel || sel.dataset.populated === "1") return;
+  sel.innerHTML = '<option value="">— Start blank —</option>' +
+    CONTENT_PRESETS.map(p => '<option value="' + escapeAttr(p.id) + '">' + escapeHtml(p.label) + '</option>').join("");
+  sel.dataset.populated = "1";
+  sel.addEventListener("change", () => {
+    const preset = CONTENT_PRESETS.find(p => p.id === sel.value);
+    const descEl = document.getElementById("contentPresetDescription");
+    const btn = document.getElementById("applyPresetBtn");
+    if (preset) {
+      if (descEl) { descEl.textContent = preset.description; descEl.style.display = "block"; }
+      if (btn) btn.disabled = false;
+    } else {
+      if (descEl) descEl.style.display = "none";
+      if (btn) btn.disabled = true;
+    }
+  });
+}
+
+function applyContentPreset() {
+  const sel = document.getElementById("contentPresetSelect");
+  if (!sel) return;
+  const preset = CONTENT_PRESETS.find(p => p.id === sel.value);
+  if (!preset) return;
+
+  // Confirmation guard if there's existing content the customer might lose
+  const headlineEl = document.querySelector('input[data-key="headline"]');
+  const subheadEl = document.querySelector('textarea[data-key="subheadline"]');
+  const headline = headlineEl ? headlineEl.value.trim() : "";
+  const subhead = subheadEl ? subheadEl.value.trim() : "";
+  const hasQuestionContent = (currentConfig && currentConfig.questions || []).some(q => q && q.text && q.text.trim());
+  if (headline || subhead || hasQuestionContent) {
+    if (!confirm("This will replace your current welcome message and questions. Continue?")) return;
+  }
+
+  // Apply welcome
+  if (headlineEl) headlineEl.value = preset.welcome.title;
+  if (subheadEl) subheadEl.value = preset.welcome.subtitle;
+
+  // Replace questions wholesale
+  currentConfig.questions = preset.questions.map(q => ({ text: q.text, helper: q.helper || "" }));
+  renderQuestions();
+
+  refreshPreview();
+  toast("✨ Template applied: " + preset.label);
+
+  // Switch to welcome sub-tab if not already there, scroll to welcome section
+  switchSubTab("welcome");
+  setTimeout(() => {
+    const target = document.querySelector('[data-sub="welcome"] .section:nth-of-type(2)');
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
+}
+
 async function fetchClients() {
   const pw = localStorage.getItem(STORAGE_KEY);
   if (!pw) return [];
@@ -2128,6 +2312,7 @@ async function deleteOverride() {
 function populateForm(config) {
   populateFontSelect();
   renderTemplates();
+  populateContentPresets();
   // Color pickers + paired text inputs share the same data-key
   document.querySelectorAll("[data-key]").forEach(el => {
     const key = el.getAttribute("data-key");
