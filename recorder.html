@@ -712,13 +712,19 @@
   applyConfig(DEFAULTS);
 
   // Preview mode: if ?preview=1, read unsaved config from localStorage instead of fetching.
-  // The dashboard's "Preview live" button writes the current form values there before opening this URL.
+  // The dashboard's preview iframe writes form state there and also pushes live updates via postMessage.
   const isPreview = new URLSearchParams(window.location.search).get("preview") === "1";
   if (isPreview) {
     try {
       const stored = localStorage.getItem("vt_preview_" + CLIENT + "_" + COURSE);
       if (stored) applyConfig(JSON.parse(stored));
     } catch {}
+    // Listen for live updates from the dashboard parent window
+    window.addEventListener("message", (e) => {
+      if (e.data && e.data.type === "VT_CONFIG_UPDATE" && e.data.config) {
+        applyConfig(e.data.config);
+      }
+    });
   } else {
     fetch(`${WORKER_URL}/config/public?client=${encodeURIComponent(CLIENT)}&course=${encodeURIComponent(COURSE)}`)
       .then(r => r.ok ? r.json() : null)

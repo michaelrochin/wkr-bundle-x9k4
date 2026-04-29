@@ -1185,7 +1185,66 @@ const CONFIG_HTML = `<!DOCTYPE html>
   }
   h1 { font-family: Georgia, serif; font-weight: normal; margin: 0 0 8px; }
   .sub { color: #6b6b6b; margin: 0 0 24px; font-size: 14px; }
-  .layout { display: block; max-width: 760px; margin: 0 auto; }
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 28px;
+    max-width: 1240px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    .live-preview-panel { position: static !important; height: 600px !important; }
+  }
+  .live-preview-panel {
+    position: sticky;
+    top: 18px;
+    border: 1px solid #e5e0d6;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #faf7f2;
+    height: calc(100vh - 60px);
+    max-height: 880px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px -8px rgba(0,0,0,0.08);
+  }
+  .live-preview-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e5e0d6;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #6b6b6b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+  }
+  .live-preview-header::before {
+    content: "";
+    width: 7px; height: 7px; background: #4ade80; border-radius: 50%;
+    animation: vt-live-pulse 1.6s infinite;
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+  }
+  @keyframes vt-live-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); }
+    70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+  }
+  .live-preview-iframe {
+    width: 100%;
+    height: calc(100% - 36px);
+    border: 0;
+    display: block;
+    background: #faf7f2;
+  }
+  .live-preview-empty {
+    padding: 60px 24px;
+    text-align: center;
+    color: #6b6b6b;
+    font-size: 13px;
+  }
   .preview-block {
     margin-top: 16px;
     padding: 18px;
@@ -1558,6 +1617,12 @@ const CONFIG_HTML = `<!DOCTYPE html>
       </div>
       </div><!-- /sub-panel settings -->
 
+    </div><!-- /panel -->
+
+    <div class="live-preview-panel" id="livePreviewPanel">
+      <div class="live-preview-header">Live preview · updates as you type</div>
+      <iframe id="livePreviewFrame" class="live-preview-iframe" title="Live recorder preview"></iframe>
+      <div class="live-preview-empty" id="livePreviewEmpty" style="display:none;">Pick a client to see the live preview here.</div>
     </div>
   </div>
   </div>
@@ -1885,6 +1950,7 @@ function handleClientChange() {
   document.getElementById("courseName").value = "";
   refreshFunnelList(sel.value, "");
   updateScopeBadge();
+  reloadLivePreview();
 }
 
 function handleFunnelChange() {
@@ -1903,6 +1969,7 @@ function handleFunnelChange() {
     sel.value = slug;
   }
   updateScopeBadge();
+  reloadLivePreview();
 }
 
 async function loadConfig() {
@@ -1948,6 +2015,7 @@ async function loadConfig() {
     updateScopeBadge();
     populateForm(config);
     refreshPreview();
+    reloadLivePreview();
     showApp();
   } catch (err) {
     const errEl = document.getElementById("gateErr");
@@ -2214,6 +2282,53 @@ function refreshPreview() {
   renderQuestionsPreview(cfg);
   renderThankYouPreview(cfg);
   renderButtonPreviews(cfg);
+  pushLivePreviewConfig(cfg);
+}
+
+function getPreviewClientCourse() {
+  const clientRaw = document.getElementById("clientName").value;
+  const courseRaw = document.getElementById("courseName").value;
+  const client = clientRaw && clientRaw !== NEW_OPTION ? clientRaw : "";
+  const course = courseRaw && courseRaw !== NEW_OPTION ? courseRaw : "preview";
+  return { client, course };
+}
+
+function reloadLivePreview() {
+  const iframe = document.getElementById("livePreviewFrame");
+  const empty = document.getElementById("livePreviewEmpty");
+  if (!iframe) return;
+  const { client, course } = getPreviewClientCourse();
+  if (!client) {
+    iframe.style.display = "none";
+    if (empty) empty.style.display = "block";
+    return;
+  }
+  if (empty) empty.style.display = "none";
+  iframe.style.display = "block";
+  // Stash current form state for the iframe to read on initial load
+  try {
+    const config = readForm();
+    localStorage.setItem("vt_preview_" + client + "_" + course, JSON.stringify(config));
+  } catch {}
+  const newPath = "/r/" + encodeURIComponent(client) + "/" + encodeURIComponent(course) + "?preview=1";
+  if (iframe.getAttribute("src") !== newPath) {
+    iframe.setAttribute("src", newPath);
+  }
+}
+
+function pushLivePreviewConfig(cfg) {
+  const iframe = document.getElementById("livePreviewFrame");
+  if (!iframe || !iframe.contentWindow) return;
+  const { client, course } = getPreviewClientCourse();
+  if (!client) return;
+  // Keep localStorage in sync so iframe reload picks up latest
+  try {
+    localStorage.setItem("vt_preview_" + client + "_" + course, JSON.stringify(cfg));
+  } catch {}
+  // Live push to the iframe — no reload, instant update
+  try {
+    iframe.contentWindow.postMessage({ type: "VT_CONFIG_UPDATE", config: cfg }, "*");
+  } catch {}
 }
 
 function renderButtonPreviews(c) {
