@@ -769,6 +769,59 @@
   // Apply defaults immediately so the page renders cleanly even if the fetch is slow.
   applyConfig(DEFAULTS);
 
+  // Preview-mode helper: jump the iframe to a specific recorder step without
+  // requiring camera access. Used by the dashboard live preview iframe.
+  function showPreviewStep(step) {
+    if (step === "intro") {
+      showStep("intro");
+      return;
+    }
+    if (step === "done") {
+      showStep("done");
+      return;
+    }
+    if (step === "question") {
+      // Render the first question with a static placeholder (no camera)
+      state.currentQ = 0;
+      const q = (QUESTIONS && QUESTIONS[0]) || { text: "", helper: "" };
+      const dotsEl = $("vtStepDots");
+      if (dotsEl) {
+        dotsEl.innerHTML = (QUESTIONS || []).map((_, i) => {
+          let cls = "vt-dot";
+          if (i === 0) cls += " active";
+          return '<span class="' + cls + '"></span>';
+        }).join("");
+      }
+      const progLabel = $("vtProgressLabel");
+      if (progLabel) progLabel.textContent = "Question 1 of " + ((QUESTIONS || []).length || 1);
+      const qText = $("vtQuestionText");
+      if (qText) qText.textContent = q.text || "";
+      const qHelp = $("vtQuestionHelper");
+      if (qHelp) qHelp.textContent = q.helper || "";
+
+      // Static black placeholder for video (no live camera in preview)
+      const video = $("vtVideo");
+      if (video) {
+        try { video.srcObject = null; } catch {}
+        video.removeAttribute("src");
+        video.style.background = "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)";
+        video.controls = false;
+      }
+
+      const controls = $("vtRecordControls");
+      if (controls) {
+        controls.innerHTML = '<button class="vt-record" type="button">' + (cfg.startRecordingLabel || "Start recording") + '</button>';
+        controls.style.display = "flex";
+      }
+      const reviewControls = $("vtReviewControls");
+      if (reviewControls) reviewControls.style.display = "none";
+      const errEl = $("vtRecordError");
+      if (errEl) errEl.innerHTML = "";
+
+      showStep("question");
+    }
+  }
+
   // Preview mode: if ?preview=1, read unsaved config from localStorage instead of fetching.
   // The dashboard's preview iframe writes form state there and also pushes live updates via postMessage.
   const isPreview = new URLSearchParams(window.location.search).get("preview") === "1";
@@ -783,8 +836,12 @@
     if (introCta) introCta.disabled = false;
     // Listen for live updates from the dashboard parent window
     window.addEventListener("message", (e) => {
-      if (e.data && e.data.type === "VT_CONFIG_UPDATE" && e.data.config) {
+      if (!e.data) return;
+      if (e.data.type === "VT_CONFIG_UPDATE" && e.data.config) {
         applyConfig(e.data.config);
+      }
+      if (e.data.type === "VT_PREVIEW_STEP" && e.data.step) {
+        showPreviewStep(e.data.step);
       }
     });
   } else {

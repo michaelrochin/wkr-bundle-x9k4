@@ -2078,7 +2078,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
     </button>
     <button class="sub-tab" data-subtab="welcome" onclick="switchSubTab('welcome')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-      Welcome
+      Welcome message
     </button>
     <button class="sub-tab" data-subtab="questions" onclick="switchSubTab('questions')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -2086,7 +2086,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
     </button>
     <button class="sub-tab" data-subtab="thankyou" onclick="switchSubTab('thankyou')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      Thank-you
+      Thank-you message
     </button>
     <button class="sub-tab" data-subtab="buttons" onclick="switchSubTab('buttons')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="9" width="20" height="6" rx="3"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/></svg>
@@ -3414,6 +3414,12 @@ function reloadLivePreview() {
   const newPath = "/r/" + encodeURIComponent(client) + "/" + encodeURIComponent(course) + "?preview=1";
   if (iframe.getAttribute("src") !== newPath) {
     iframe.setAttribute("src", newPath);
+    iframe.onload = () => {
+      // Once the iframe finishes loading, re-send the desired preview step + config
+      pushPreviewStep(currentPreviewStep);
+      const cfg = readForm();
+      try { iframe.contentWindow.postMessage({ type: "VT_CONFIG_UPDATE", config: cfg }, "*"); } catch {}
+    };
   }
 }
 
@@ -3558,13 +3564,34 @@ function switchTab(name) {
 const SUB_TAB_ORDER = ["style", "welcome", "questions", "thankyou", "buttons", "settings", "share"];
 const SUB_TAB_LABELS = {
   style: "Style",
-  welcome: "Welcome",
+  welcome: "Welcome message",
   questions: "Questions",
-  thankyou: "Thank-you",
+  thankyou: "Thank-you message",
   buttons: "Buttons",
   settings: "Settings",
   share: "Share"
 };
+
+// Map each sub-tab to which recorder step the live preview should show
+const SUB_TAB_TO_PREVIEW_STEP = {
+  style: "intro",
+  welcome: "intro",
+  questions: "question",
+  thankyou: "done",
+  buttons: "question",
+  settings: "intro",
+  share: "intro"
+};
+let currentPreviewStep = "intro";
+
+function pushPreviewStep(step) {
+  currentPreviewStep = step;
+  const iframe = document.getElementById("livePreviewFrame");
+  if (!iframe || !iframe.contentWindow) return;
+  try {
+    iframe.contentWindow.postMessage({ type: "VT_PREVIEW_STEP", step }, "*");
+  } catch {}
+}
 
 function renderWizardNav(activeName) {
   const idx = SUB_TAB_ORDER.indexOf(activeName);
@@ -3607,6 +3634,8 @@ function switchSubTab(name) {
   renderWizardNav(name);
   // Update share box visibility / load short link when arriving at Share
   if (name === "share") updateShareBox();
+  // Tell the live preview iframe which screen to show (welcome/question/thank-you)
+  pushPreviewStep(SUB_TAB_TO_PREVIEW_STEP[name] || "intro");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
