@@ -75,7 +75,7 @@ export default {
     const url = new URL(request.url);
 
     try {
-      if (url.pathname === "/start" && request.method === "GET") {
+      if ((url.pathname === "/" || url.pathname === "/start") && request.method === "GET") {
         return new Response(LANDING_HTML, { headers: { "Content-Type": "text/html; charset=utf-8" } });
       }
       if (url.pathname === "/setup" && request.method === "GET") {
@@ -931,6 +931,7 @@ const ADMIN_HTML = `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>StokeReel · Testimonials</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1a1a'/%3E%3Cpolygon points='24,16 24,48 52,32' fill='%23c9a961'/%3E%3C/svg%3E">
 <style>
   :root {
     --cream: #faf7f2;
@@ -1169,6 +1170,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>StokeReel · Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1a1a'/%3E%3Cpolygon points='24,16 24,48 52,32' fill='%23c9a961'/%3E%3C/svg%3E">
 <style>
   * { box-sizing: border-box; }
   body {
@@ -1300,7 +1302,13 @@ const CONFIG_HTML = `<!DOCTYPE html>
 <div id="app" style="display:none;">
   <div class="top-bar">
     <div>
-      <h1>StokeReel</h1>
+      <h1 style="display:flex; align-items:center; gap:10px;">
+        <svg width="32" height="32" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#1a1a1a"/>
+          <polygon points="24,16 24,48 52,32" fill="#c9a961"/>
+        </svg>
+        StokeReel
+      </h1>
       <p class="sub" id="tabSub">Customize branding or watch your stoked customers — all in one place.</p>
     </div>
     <div class="controls">
@@ -2404,6 +2412,7 @@ const SETUP_HTML = `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>StokeReel · First-time setup</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1a1a'/%3E%3Cpolygon points='24,16 24,48 52,32' fill='%23c9a961'/%3E%3C/svg%3E">
 <style>
   * { box-sizing: border-box; }
   body {
@@ -2455,7 +2464,14 @@ const SETUP_HTML = `<!DOCTYPE html>
 </div>
 
 <div class="card" id="setupCard" style="display:none;">
-  <h1>Welcome to StokeReel</h1>
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom: 18px;">
+    <svg width="36" height="36" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="64" height="64" rx="14" fill="#1a1a1a"/>
+      <polygon points="24,16 24,48 52,32" fill="#c9a961"/>
+    </svg>
+    <strong style="font-family: Georgia, serif; font-size: 20px;">StokeReel</strong>
+  </div>
+  <h1>Welcome — let's set this up</h1>
   <p class="sub">5 minutes to set up. You'll need a free Cloudflare account and one R2 API token.</p>
 
   <div class="step">
