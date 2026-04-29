@@ -1431,22 +1431,25 @@ const CONFIG_HTML = `<!DOCTYPE html>
     </div>
 
     <div id="shareBox" style="display:none; margin-bottom:20px; padding:18px; background:linear-gradient(135deg,#fdfbf6,#f5efe2); border:1px solid #e5e0d6; border-radius:8px;">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         <strong style="font-size:14px;">Share & embed this funnel</strong>
         <span id="shareLabel" style="font-size:12px; color:#6b6b6b;"></span>
       </div>
-      <div style="margin-bottom:10px;">
-        <label style="display:block; font-size:12px; color:#6b6b6b; margin-bottom:4px;">Direct URL — send students this link</label>
-        <div style="display:flex; gap:6px;">
-          <input id="shareUrl" type="text" readonly style="flex:1; padding:8px 10px; border:1px solid #e5e0d6; border-radius:4px; font-family:monospace; font-size:12px; background:white;">
-          <button onclick="copyShare('shareUrl', this)" class="secondary" style="white-space:nowrap;">Copy</button>
-        </div>
-      </div>
-      <div>
-        <label style="display:block; font-size:12px; color:#6b6b6b; margin-bottom:4px;">Iframe embed — paste into any HTML / Custom Code block (GHL, Webflow, WordPress, Squarespace, ClickFunnels, etc.)</label>
+      <p style="font-size: 12px; color: #6b6b6b; margin: 0 0 14px;">Two ways to use your own domain. The iframe (option 1) is the easiest — works on any site, any domain, zero DNS work.</p>
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-size:12px; color:#1a1a1a; margin-bottom:4px; font-weight:600;">⭐ Option 1 — Iframe embed (works on any domain instantly)</label>
+        <p style="font-size: 12px; color: #6b6b6b; margin: 0 0 6px;">Paste into any HTML / Custom Code block on your site (GHL, Webflow, WordPress, Squarespace, ClickFunnels, Carrd, anywhere). Your domain shows in the URL bar — no DNS setup needed.</p>
         <div style="display:flex; gap:6px;">
           <input id="shareIframe" type="text" readonly style="flex:1; padding:8px 10px; border:1px solid #e5e0d6; border-radius:4px; font-family:monospace; font-size:12px; background:white;">
           <button onclick="copyShare('shareIframe', this)" class="secondary" style="white-space:nowrap;">Copy</button>
+        </div>
+      </div>
+      <div>
+        <label style="display:block; font-size:12px; color:#1a1a1a; margin-bottom:4px; font-weight:600;">Option 2 — Direct shareable URL</label>
+        <p style="font-size: 12px; color: #6b6b6b; margin: 0 0 6px;">Send this link directly via email / SMS / DM. By default this uses the worker URL; if you've set a custom domain in Settings, this updates automatically.</p>
+        <div style="display:flex; gap:6px;">
+          <input id="shareUrl" type="text" readonly style="flex:1; padding:8px 10px; border:1px solid #e5e0d6; border-radius:4px; font-family:monospace; font-size:12px; background:white;">
+          <button onclick="copyShare('shareUrl', this)" class="secondary" style="white-space:nowrap;">Copy</button>
         </div>
       </div>
     </div>
@@ -1637,25 +1640,31 @@ const CONFIG_HTML = `<!DOCTYPE html>
       </div>
 
       <div class="section">
-        <h2>Custom domain (advanced)</h2>
-        <p class="help-text" style="margin: 0 0 12px;">Use your own domain like <code>recorder.yourdomain.com</code> instead of the long <code>*.workers.dev</code> URL. Customers see the polished URL on your share link + iframe embed.</p>
+        <h2>Pretty share URL (optional)</h2>
+        <p class="help-text" style="margin: 0 0 12px;">Most people don't need this. The <strong>iframe embed</strong> on the Branding tab already lets you use your own domain — just paste it into a page on your site (any platform, any domain) and the URL bar shows your domain naturally.</p>
+        <p class="help-text" style="margin: 0 0 12px;">Only set this up if you want the <em>standalone shareable link</em> (the one you'd paste in an email or SMS) to be on your domain instead of the long <code>*.workers.dev</code> one.</p>
         <div class="field">
           <label>Custom domain (without https://)</label>
           <input type="text" data-key="customDomain" placeholder="recorder.yourdomain.com">
         </div>
         <details style="margin-top:10px;">
-          <summary style="cursor:pointer; color:#a88840; font-size:13px; font-weight:600;">▸ How to set this up (one-time, ~3 min)</summary>
+          <summary style="cursor:pointer; color:#a88840; font-size:13px; font-weight:600;">▸ How to set this up (Cloudflare DNS path, ~3 min)</summary>
           <div style="margin-top:10px; padding:14px; background:#fdfbf6; border-left:3px solid #c9a961; border-radius:4px; line-height:1.6; font-size:13px; color:#1a1a1a;">
-            <p style="margin:0 0 8px;"><strong>Pre-req:</strong> The domain you want to use (e.g. <code>yourdomain.com</code>) must be on Cloudflare. If it's not, go to Cloudflare → <em>+ Add a domain</em> first.</p>
-            <ol style="margin:8px 0 0; padding-left:22px;">
-              <li>Open Cloudflare dashboard → <strong>Workers &amp; Pages</strong> → click your worker (e.g. <code>stokereel</code>)</li>
-              <li>Click <strong>Settings</strong> → <strong>Domains &amp; Routes</strong></li>
-              <li>Click <strong>+ Add</strong> → <strong>Custom Domain</strong></li>
-              <li>Enter <code>recorder.yourdomain.com</code> (any subdomain you want) → Add Domain</li>
-              <li>Cloudflare auto-creates the DNS record. Wait ~60 seconds.</li>
-              <li>Come back here, paste the same domain above, hit Save.</li>
+            <p style="margin:0 0 8px;">This path requires your domain to be using Cloudflare for DNS. If it's not, you can either:</p>
+            <ul style="margin:0 0 12px; padding-left:22px;">
+              <li>Migrate the domain's nameservers to Cloudflare (free, takes ~5 min)</li>
+              <li>Or skip this and use the iframe embed instead — works on any domain, no DNS work</li>
+            </ul>
+            <p style="margin:0 0 6px;"><strong>Cloudflare DNS setup:</strong></p>
+            <ol style="margin:0; padding-left:22px;">
+              <li>Cloudflare → <strong>Workers &amp; Pages</strong> → click your worker (e.g. <code>stokereel</code>)</li>
+              <li><strong>Settings</strong> → <strong>Domains &amp; Routes</strong></li>
+              <li><strong>+ Add</strong> → <strong>Custom Domain</strong></li>
+              <li>Enter <code>recorder.yourdomain.com</code> → Add</li>
+              <li>Wait ~60 sec for SSL provisioning</li>
+              <li>Paste the same domain above and Save</li>
             </ol>
-            <p style="margin:10px 0 0;"><strong>Done.</strong> Your share URLs and iframe embed now use the polished domain. The original <code>*.workers.dev</code> URL keeps working — both serve the same content.</p>
+            <p style="margin:10px 0 0;"><strong>External DNS (Cloudflare for SaaS):</strong> If you can't move DNS to Cloudflare, this is doable but more involved — let me know and I'll add an automated flow.</p>
           </div>
         </details>
       </div>
