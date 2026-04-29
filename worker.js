@@ -3221,23 +3221,33 @@ const CONFIG_HTML = `<!DOCTYPE html>
   }
   .text-link-btn { color: var(--d-muted) !important; }
   .text-link-btn:hover { color: #ef4444 !important; }
-  /* Premium select chevron */
-  select.premium-select {
+  /* Premium select chevron — explicit no-repeat + right-positioning so the
+     SVG icon doesn't tile across the field */
+  select.premium-select, .field select.premium-select, .field select[id="headingFontSelect"] {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background-color: var(--d-bg-3) !important;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='1 1.5 6 6.5 11 1.5'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    padding-right: 38px !important;
+    color: var(--d-ink) !important;
+    border-color: var(--d-border) !important;
   }
-  /* Buttons */
-  button:not(.tab):not(.sub-tab):not(.copy-btn):not(.ws-add):not(.ws-save):not(.ws-delete):not(.text-link-btn):not(.shape-card):not(.toggle-switch):not(.subs-btn-ghost):not(.subs-btn-primary):not(.update-banner-btn):not(.update-banner-dismiss):not(.feature-toggle):not(.copy-btn-pro):not(.device-tab) {
+  /* Buttons — exclude .secondary so template buttons + others stay dark */
+  button:not(.tab):not(.sub-tab):not(.copy-btn):not(.secondary):not(.ws-add):not(.ws-save):not(.ws-delete):not(.text-link-btn):not(.shape-card):not(.toggle-switch):not(.subs-btn-ghost):not(.subs-btn-primary):not(.update-banner-btn):not(.update-banner-dismiss):not(.feature-toggle):not(.copy-btn-pro):not(.device-tab) {
     background: linear-gradient(180deg, #f0d57a 0%, #c9a961 100%) !important;
     color: #0a0a0a !important;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 14px -4px rgba(212,182,115,0.45) !important;
   }
-  button.secondary {
+  /* High-specificity secondary override so it always wins over the catch-all */
+  body button.secondary, button[type="button"].secondary, .panel button.secondary {
     background: var(--d-bg-3) !important;
     color: var(--d-ink) !important;
-    border-color: var(--d-border-strong) !important;
+    border: 1px solid var(--d-border-strong) !important;
     box-shadow: none !important;
   }
-  button.secondary:hover {
+  body button.secondary:hover, button[type="button"].secondary:hover, .panel button.secondary:hover {
     background: var(--d-bg-4) !important;
     border-color: rgba(212,182,115,0.4) !important;
     color: var(--d-warm-bright) !important;
