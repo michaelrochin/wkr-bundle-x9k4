@@ -1274,6 +1274,24 @@ const CONFIG_HTML = `<!DOCTYPE html>
   .tab.active { color: #1a1a1a; border-bottom-color: #c9a961; }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
+  .sub-tabs {
+    display: flex; gap: 2px; margin-bottom: 24px; flex-wrap: wrap;
+    background: white; border: 1px solid #e5e0d6; border-radius: 999px; padding: 4px; width: fit-content;
+  }
+  .sub-tab {
+    background: transparent; border: none; padding: 8px 16px; cursor: pointer;
+    font-size: 13px; font-weight: 500; color: #6b6b6b; font-family: inherit;
+    border-radius: 999px; transition: background 0.15s, color 0.15s; box-shadow: none;
+  }
+  .sub-tab:hover { background: #faf7f2; color: #1a1a1a; transform: none; box-shadow: none; }
+  .sub-tab.active { background: #1a1a1a; color: white; }
+  .sub-tab.active:hover { background: #1a1a1a; color: white; }
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; }
+  .sub-panel-hint {
+    font-size: 13px; color: #6b6b6b; margin: 0 0 16px; padding: 10px 14px;
+    background: #fdfbf6; border-left: 3px solid #c9a961; border-radius: 4px;
+  }
   .submissions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
   .sub-card { background: white; border: 1px solid #e5e0d6; border-radius: 8px; overflow: hidden; }
   .sub-card video { width: 100%; height: 220px; object-fit: cover; background: #000; display: block; }
@@ -1356,8 +1374,20 @@ const CONFIG_HTML = `<!DOCTYPE html>
       </div>
     </div>
 
+  <div class="sub-tabs">
+    <button class="sub-tab active" data-subtab="style" onclick="switchSubTab('style')">🎨 Style</button>
+    <button class="sub-tab" data-subtab="welcome" onclick="switchSubTab('welcome')">👋 Welcome</button>
+    <button class="sub-tab" data-subtab="questions" onclick="switchSubTab('questions')">❓ Questions</button>
+    <button class="sub-tab" data-subtab="thankyou" onclick="switchSubTab('thankyou')">🙏 Thank-you</button>
+    <button class="sub-tab" data-subtab="buttons" onclick="switchSubTab('buttons')">🔘 Buttons</button>
+    <button class="sub-tab" data-subtab="settings" onclick="switchSubTab('settings')">⚙️ Settings</button>
+  </div>
+
   <div class="layout">
     <div class="panel">
+
+      <div class="sub-panel active" data-sub="style">
+      <p class="sub-panel-hint">Set your brand identity once. Logo, colors, font — applied across every screen.</p>
 
       <div class="section">
         <h2>Logo</h2>
@@ -1401,18 +1431,23 @@ const CONFIG_HTML = `<!DOCTYPE html>
         </div>
       </div>
 
+      </div><!-- /sub-panel style -->
+
+      <div class="sub-panel" data-sub="welcome">
+      <p class="sub-panel-hint">The first thing people see. Get this right and they'll hit record.</p>
       <div class="section">
         <h2>Welcome page</h2>
-        <p class="help-text" style="margin: 0 0 12px;">What people see first — before they hit record.</p>
         <div class="field"><label>Headline</label><input type="text" data-key="headline"></div>
         <div class="field"><label>Subheadline</label><textarea data-key="subheadline" rows="3"></textarea></div>
         <div class="field"><label>Intro CTA button label</label><input type="text" data-key="getStartedLabel" placeholder="Get started"><div class="field-preview" data-preview-for="getStartedLabel"></div></div>
         <div class="preview-block" id="previewWelcome"></div>
       </div>
+      </div><!-- /sub-panel welcome -->
 
+      <div class="sub-panel" data-sub="thankyou">
+      <p class="sub-panel-hint">After they submit. Optionally redirect to a download, scheduling page, or coupon.</p>
       <div class="section">
         <h2>Thank-you screen</h2>
-        <p class="help-text" style="margin: 0 0 12px;">What people see after submitting. Optionally redirect them to a gift, a scheduling page, or a survey.</p>
         <div class="field"><label>Thank-you headline</label><input type="text" data-key="thankYouHeader"></div>
         <div class="field"><label>Thank-you body</label><textarea data-key="thankYouBody" rows="2"></textarea></div>
         <div class="field"><label>Signature (optional)</label><input type="text" data-key="signature" placeholder="— Your Name"></div>
@@ -1420,13 +1455,10 @@ const CONFIG_HTML = `<!DOCTYPE html>
         <div class="field"><label>Redirect button URL</label><input type="text" data-key="thankYouButtonUrl" placeholder="https://yoursite.com/free-gift"></div>
         <div class="preview-block" id="previewThankYou"></div>
       </div>
+      </div><!-- /sub-panel thankyou -->
 
-      <div class="section">
-        <h2>Notifications</h2>
-        <p class="help-text" style="margin: 0 0 12px;">Get pinged on Slack, Discord, Zapier, or any webhook each time a testimonial lands.</p>
-        <div class="field"><label>Webhook URL (optional)</label><input type="text" data-key="notifyWebhookUrl" placeholder="https://hooks.slack.com/services/..."></div>
-      </div>
-
+      <div class="sub-panel" data-sub="buttons">
+      <p class="sub-panel-hint">Customize what every button says during the recording flow. Each preview shows the live styled button.</p>
       <div class="section">
         <h2>Recording flow button labels</h2>
         <p class="help-text" style="margin: 0 0 12px;">Customize what every button says during the recording flow. Leave blank to use the default.</p>
@@ -1439,13 +1471,19 @@ const CONFIG_HTML = `<!DOCTYPE html>
         <div class="field"><label>"Type instead" link</label><input type="text" data-key="typeInsteadLabel" placeholder="Prefer to type instead? Click here."><div class="field-preview" data-preview-for="typeInsteadLabel"></div></div>
         <div class="field"><label>"Switch back to video" link</label><input type="text" data-key="switchToVideoLabel" placeholder="Switch to video instead"><div class="field-preview" data-preview-for="switchToVideoLabel"></div></div>
       </div>
+      </div><!-- /sub-panel buttons -->
 
+      <div class="sub-panel" data-sub="questions">
+      <p class="sub-panel-hint">These appear one at a time during recording. URL slug determines which folder submissions land in.</p>
       <div class="section">
         <h2>Questions</h2>
-        <p class="help-text" style="margin-bottom: 12px;">These appear on every product page for this client. The URL slug determines which course folder submissions land in.</p>
         <div id="questionsContainer"></div>
         <div class="preview-block" id="previewQuestions"></div>
       </div>
+      </div><!-- /sub-panel questions -->
+
+      <div class="sub-panel" data-sub="settings">
+      <p class="sub-panel-hint">Recording limits, mode toggles, and where to send notifications.</p>
 
       <div class="section">
         <h2>Behavior</h2>
@@ -1459,6 +1497,13 @@ const CONFIG_HTML = `<!DOCTYPE html>
           <label for="allowTextBox" style="margin:0;">Allow typed responses<br><span class="help-text">Shows the "Prefer to type instead" option. Uncheck to force video only.</span></label>
         </div>
       </div>
+
+      <div class="section">
+        <h2>Notifications</h2>
+        <p class="help-text" style="margin: 0 0 12px;">Get pinged on Slack, Discord, Zapier, or any webhook each time a testimonial lands.</p>
+        <div class="field"><label>Webhook URL (optional)</label><input type="text" data-key="notifyWebhookUrl" placeholder="https://hooks.slack.com/services/..."></div>
+      </div>
+      </div><!-- /sub-panel settings -->
 
     </div>
   </div>
@@ -2239,6 +2284,13 @@ function switchTab(name) {
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("tab-" + name).classList.add("active");
   if (name === "submissions") loadSubmissions();
+}
+
+function switchSubTab(name) {
+  document.querySelectorAll(".sub-tab").forEach(t => t.classList.toggle("active", t.dataset.subtab === name));
+  document.querySelectorAll(".sub-panel").forEach(p => p.classList.toggle("active", p.dataset.sub === name));
+  // Scroll to top so customer immediately sees the section + its preview
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 let featuredKeysByClient = {};
