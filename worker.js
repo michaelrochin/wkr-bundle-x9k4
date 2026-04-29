@@ -1442,7 +1442,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
 
       <div class="sub-panel-actions">
         <button onclick="save()">💾 Save changes</button>
-        <button onclick="saveAndPreview()" class="secondary">👁 Save & preview live</button>
+        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
         <span class="hint">Changes apply within 30 seconds</span>
       </div>
       </div><!-- /sub-panel style -->
@@ -1458,7 +1458,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
       </div>
       <div class="sub-panel-actions">
         <button onclick="save()">💾 Save changes</button>
-        <button onclick="saveAndPreview()" class="secondary">👁 Save & preview live</button>
+        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
         <span class="hint">Changes apply within 30 seconds</span>
       </div>
       </div><!-- /sub-panel welcome -->
@@ -1476,7 +1476,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
       </div>
       <div class="sub-panel-actions">
         <button onclick="save()">💾 Save changes</button>
-        <button onclick="saveAndPreview()" class="secondary">👁 Save & preview live</button>
+        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
         <span class="hint">Changes apply within 30 seconds</span>
       </div>
       </div><!-- /sub-panel thankyou -->
@@ -1511,7 +1511,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
       </div>
       <div class="sub-panel-actions">
         <button onclick="save()">💾 Save changes</button>
-        <button onclick="saveAndPreview()" class="secondary">👁 Save & preview live</button>
+        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
         <span class="hint">Changes apply within 30 seconds</span>
       </div>
       </div><!-- /sub-panel buttons -->
@@ -1525,7 +1525,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
       </div>
       <div class="sub-panel-actions">
         <button onclick="save()">💾 Save changes</button>
-        <button onclick="saveAndPreview()" class="secondary">👁 Save & preview live</button>
+        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
         <span class="hint">Changes apply within 30 seconds</span>
       </div>
       </div><!-- /sub-panel questions -->
@@ -1553,7 +1553,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
       </div>
       <div class="sub-panel-actions">
         <button onclick="save()">💾 Save changes</button>
-        <button onclick="saveAndPreview()" class="secondary">👁 Save & preview live</button>
+        <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
         <span class="hint">Changes apply within 30 seconds</span>
       </div>
       </div><!-- /sub-panel settings -->
@@ -2346,15 +2346,18 @@ function switchSubTab(name) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-async function saveAndPreview() {
+function openPreview() {
   const clientRaw = document.getElementById("clientName").value;
   const courseRaw = document.getElementById("courseName").value;
   const client = clientRaw && clientRaw !== NEW_OPTION ? clientRaw : "";
   const course = courseRaw && courseRaw !== NEW_OPTION ? courseRaw : "preview";
   if (!client) { toast("Pick a client first."); return; }
-  await save();
-  // Open the live recorder in a new tab so the user sees their saved changes in context
-  const url = "/r/" + encodeURIComponent(client) + "/" + encodeURIComponent(course);
+  // Stash current (unsaved) form state in localStorage so the recorder can read it
+  const config = readForm();
+  try {
+    localStorage.setItem("vt_preview_" + client + "_" + course, JSON.stringify(config));
+  } catch {}
+  const url = "/r/" + encodeURIComponent(client) + "/" + encodeURIComponent(course) + "?preview=1";
   window.open(url, "_blank");
 }
 

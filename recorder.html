@@ -619,7 +619,13 @@
   }
 
   function applyConfig(c) {
-    cfg = { ...DEFAULTS, ...c };
+    // Merge DEFAULTS with c, but skip empty strings from c so defaults shine through.
+    cfg = { ...DEFAULTS };
+    for (const k in (c || {})) {
+      const v = c[k];
+      if (typeof v === "string" && v === "") continue;
+      cfg[k] = v;
+    }
     QUESTIONS = cfg.questions && cfg.questions.length ? cfg.questions : DEFAULTS.questions;
     MAX_RECORDING_SECONDS = cfg.maxRecordingSeconds || DEFAULTS.maxRecordingSeconds;
     if (cfg.headingFontGoogleUrl) loadGoogleFont(cfg.headingFontGoogleUrl);
@@ -702,13 +708,23 @@
     }
   }
 
-  // Apply defaults immediately so the page renders cleanly even if the fetch is slow,
-  // then fetch the live config and override.
+  // Apply defaults immediately so the page renders cleanly even if the fetch is slow.
   applyConfig(DEFAULTS);
-  fetch(`${WORKER_URL}/config/public?client=${encodeURIComponent(CLIENT)}&course=${encodeURIComponent(COURSE)}`)
-    .then(r => r.ok ? r.json() : null)
-    .then(c => { if (c) applyConfig(c); })
-    .catch(() => {});
+
+  // Preview mode: if ?preview=1, read unsaved config from localStorage instead of fetching.
+  // The dashboard's "Preview live" button writes the current form values there before opening this URL.
+  const isPreview = new URLSearchParams(window.location.search).get("preview") === "1";
+  if (isPreview) {
+    try {
+      const stored = localStorage.getItem("vt_preview_" + CLIENT + "_" + COURSE);
+      if (stored) applyConfig(JSON.parse(stored));
+    } catch {}
+  } else {
+    fetch(`${WORKER_URL}/config/public?client=${encodeURIComponent(CLIENT)}&course=${encodeURIComponent(COURSE)}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(c => { if (c) applyConfig(c); })
+      .catch(() => {});
+  }
 
   // Fetch featured testimonials and render carousel above intro form
   fetch(`${WORKER_URL}/featured?client=${encodeURIComponent(CLIENT)}`)
