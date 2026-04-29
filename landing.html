@@ -127,8 +127,14 @@
     gap: 16px;
     margin-bottom: 32px;
   }
+  .tier-grid-two {
+    grid-template-columns: 1fr 1fr;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   @media (max-width: 800px) {
-    .tier-grid { grid-template-columns: 1fr; }
+    .tier-grid, .tier-grid-two { grid-template-columns: 1fr; }
   }
   .tier {
     background: white;
@@ -446,23 +452,24 @@
     <dt>What if I need help during setup?</dt>
     <dd>30 days of email support included. Reply to your Stripe receipt or message me directly — 24-hour response time.</dd>
 
-    <dt>What if I want it set up FOR me?</dt>
-    <dd>That's the $497 done-for-you tier below. I install it on your account, brand it to your colors, write your 5-email follow-up sequence, and hand you working URLs. About 30 minutes of your time on a screenshare.</dd>
+    <dt>What if I'm running this for multiple clients or brands?</dt>
+    <dd>Grab the Agency plan ($297). Same tool, but you can run unlimited clients/brands from one install. Each client gets their own branded recorder, their own dashboard, their own questions. Built-in switcher between clients. Resell to your clients at whatever price you want.</dd>
   </dl>
 
   <hr>
 
-  <h2 style="text-align:center; margin-bottom: 8px;">Pick your tier</h2>
-  <p style="text-align:center; color: var(--muted); margin: 0 0 28px;">All tiers include the 5-email testimonial collection sequence. No monthly fees. Ever.</p>
+  <h2 style="text-align:center; margin-bottom: 8px;">Pick your plan</h2>
+  <p style="text-align:center; color: var(--muted); margin: 0 0 28px;">Both include the 5-email testimonial sequence + 30 days of email support. No monthly fees. Ever.</p>
 
-  <div class="tier-grid">
+  <div class="tier-grid tier-grid-two">
     <div class="tier">
-      <div class="tier-name">Solo</div>
+      <div class="tier-name">Single site</div>
       <div class="tier-price">$97</div>
       <div class="tier-tag">one brand · one business</div>
       <ul class="tier-features">
         <li>StokeReel for one brand or business</li>
         <li>5-email testimonial collection sequence</li>
+        <li>Custom colors, logo, questions, branding</li>
         <li>Step-by-step setup walkthrough</li>
         <li>30 days of email support</li>
       </ul>
@@ -470,34 +477,19 @@
     </div>
 
     <div class="tier tier-popular">
-      <div class="tier-badge">For agencies</div>
-      <div class="tier-name">Agency</div>
+      <div class="tier-badge">Best for agencies</div>
+      <div class="tier-name">Agency / unlimited</div>
       <div class="tier-price">$297</div>
       <div class="tier-tag">unlimited brands · install once, run for every client</div>
       <ul class="tier-features">
+        <li>Everything in Single site, plus:</li>
         <li>Use StokeReel for unlimited clients/brands</li>
-        <li>Each client gets their own branded recorder</li>
-        <li>5-email sequence (rebrand for each client)</li>
-        <li>Built-in multi-tenant dashboard</li>
+        <li>Each client gets their own branded recorder + dashboard</li>
+        <li>Built-in multi-client / multi-funnel switcher</li>
+        <li>Resell to your clients at any markup you want</li>
         <li>60 days of email support</li>
-        <li>Resell to your clients at any markup</li>
       </ul>
-      <a href="mailto:hello@stokereel.com?subject=Agency%20tier%20%24297%20StokeReel" class="tier-btn">Get the Agency tier — $297</a>
-    </div>
-
-    <div class="tier">
-      <div class="tier-name">Done-for-you</div>
-      <div class="tier-price">$497</div>
-      <div class="tier-tag">I install + brand it for you</div>
-      <ul class="tier-features">
-        <li>Everything in Solo, plus:</li>
-        <li>I install StokeReel on your account</li>
-        <li>Brand it to your exact colors / logo / voice</li>
-        <li>I write the 5-email sequence specifically for your business</li>
-        <li>30-min screenshare hand-off</li>
-        <li>30 days of email support after install</li>
-      </ul>
-      <a href="https://buy.stripe.com/dRm00j4NybqidbDa0yfnO01" class="tier-btn">Book install — $497</a>
+      <a href="mailto:hello@stokereel.com?subject=Agency%20tier%20%24297%20StokeReel" class="tier-btn">Get the Agency plan — $297</a>
     </div>
   </div>
 
