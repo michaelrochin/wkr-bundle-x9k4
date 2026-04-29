@@ -3,718 +3,1275 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>StokeReel — capture your most hyped customers on video</title>
-<meta name="description" content="Self-hosted video testimonial collector. Free forever on Cloudflare. One click to deploy your own instance.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000'/%3E%3Cpolygon points='24,16 24,48 52,32' fill='%23c9a961'/%3E%3C/svg%3E">
+<title>Stokereel — Video testimonials that actually convert</title>
+<meta name="description" content="Stokereel turns happy customers into your best salespeople. Self-hosted video testimonials, deadly simple to embed, no monthly bill.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080808'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23FF2D55'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #050505;
-    --bg-2: #0c0c0c;
-    --bg-3: #141414;
-    --ink: #fafafa;
-    --ink-2: #c4c4c4;
-    --muted: #7a7a7a;
-    --muted-2: #4a4a4a;
-    --border: rgba(255,255,255,0.08);
-    --border-strong: rgba(255,255,255,0.14);
-    --warm: #d4b673;
-    --warm-bright: #fbd86e;
-    --warm-dark: #b8975a;
-    --accent: #d4b673;
-    --error: #ef4444;
+    --bg: #080808;
+    --surface: #0F0F12;
+    --elevated: #18181C;
+    --elevated-2: #1F1F25;
+    --amber: #F5A623;
+    --amber-bright: #FFB94A;
+    --amber-deep: #C8841C;
+    --red: #FF2D55;
+    --red-deep: #C71F40;
+    --text: #F0EEE9;
+    --text-muted: #6B6B7A;
+    --text-faint: #44444F;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --glow-amber: rgba(245,166,35,0.15);
+    --glow-amber-strong: rgba(245,166,35,0.35);
+    --glow-red: rgba(255,45,85,0.20);
   }
-  * { box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-    font-feature-settings: "cv11", "ss01";
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: var(--bg);
-    color: var(--ink);
-    line-height: 1.6;
+    color: var(--text);
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-image:
-      radial-gradient(circle at 20% -10%, rgba(212,182,115,0.10), transparent 50%),
-      radial-gradient(circle at 100% 10%, rgba(212,182,115,0.06), transparent 45%),
-      radial-gradient(circle at 50% 110%, rgba(212,182,115,0.08), transparent 40%);
-    background-attachment: fixed;
-    position: relative;
+    overflow-x: hidden;
   }
-  /* Subtle grain overlay for that AI/cinematic feel */
+  /* Film grain overlay — sits above everything but below interactive content */
   body::before {
     content: "";
     position: fixed; inset: 0;
     pointer-events: none;
-    opacity: 0.025;
-    z-index: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    z-index: 100;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  .wrap { max-width: 880px; margin: 0 auto; padding: 72px 28px; position: relative; z-index: 1; }
-  h1 {
-    font-family: "Fraunces", Georgia, serif;
-    font-size: 60px;
-    line-height: 1.02;
-    letter-spacing: -0.035em;
-    margin: 0 0 18px;
-    font-weight: 500;
-    color: var(--ink);
-    background: linear-gradient(180deg, #ffffff 0%, #b8b8b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  @media (max-width: 720px) { h1 { font-size: 42px; } }
-  h2 {
-    font-family: "Fraunces", Georgia, serif;
-    font-size: 36px;
-    line-height: 1.15;
-    margin: 64px 0 18px;
-    font-weight: 500;
-    color: var(--ink);
+  a { color: var(--amber); text-decoration: none; }
+  a:hover { color: var(--amber-bright); }
+  ::selection { background: var(--amber); color: #000; }
+
+  /* Typography */
+  h1, h2, h3, h4 {
+    font-family: "Syne", "DM Sans", sans-serif;
+    font-weight: 800;
+    color: var(--text);
     letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin: 0;
   }
-  h3 { font-size: 16px; margin: 0 0 6px; color: var(--ink); font-weight: 600; }
-  p, li { font-size: 16.5px; color: var(--ink-2); }
-  a { color: var(--warm); }
-  a:hover { color: var(--warm-bright); }
-  .lead {
-    font-size: 20px;
-    color: var(--ink-2);
-    margin: 0 0 36px;
-    line-height: 1.55;
-    max-width: 640px;
+  .display {
+    font-size: clamp(3rem, 7.2vw, 6rem);
+    line-height: 0.97;
+    letter-spacing: -0.04em;
+    font-weight: 800;
+    text-transform: uppercase;
   }
+  .display .accent { color: var(--amber); }
+  .display .strike {
+    position: relative; display: inline-block;
+    color: var(--text-muted);
+  }
+  .display .strike::after {
+    content: ""; position: absolute;
+    left: -2%; right: -2%; top: 52%;
+    height: 6px; background: var(--red);
+    transform: rotate(-2deg);
+  }
+  h2 { font-size: clamp(2rem, 4vw, 3rem); }
+  h3 { font-size: 1.25rem; font-family: "DM Sans", sans-serif; font-weight: 700; letter-spacing: -0.01em; }
+  p { color: var(--text); }
+  p.muted { color: var(--text-muted); }
+
+  /* Section eyebrow — small caps mono with REC dot */
   .eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 11px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.16em;
-    color: var(--warm);
-    background: rgba(212,182,115,0.08);
-    border: 1px solid rgba(212,182,115,0.22);
-    padding: 6px 12px;
-    border-radius: 999px;
-    margin-bottom: 22px;
-  }
-  .eyebrow::before {
-    content: "";
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--warm-bright);
-    box-shadow: 0 0 8px var(--warm);
-  }
-  .deploy-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 32px 0 8px; }
-  .btn-primary {
     display: inline-flex; align-items: center; gap: 10px;
-    background: linear-gradient(180deg, #f0d57a 0%, #c9a961 100%);
-    color: #0a0a0a;
-    padding: 14px 26px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.005em;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--text-muted);
+  }
+  .rec-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 0 0 var(--glow-red);
+    animation: rec-pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes rec-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,45,85,0.7); }
+    50% { opacity: 0.55; box-shadow: 0 0 0 6px rgba(255,45,85,0); }
+  }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 22px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px; font-weight: 600;
+    border-radius: 6px;
     border: 0;
-    transition: transform 0.15s, box-shadow 0.18s, filter 0.18s;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease, background 180ms ease, color 180ms ease, border-color 180ms ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(180deg, #FFB94A 0%, #F5A623 50%, #C8841C 100%);
+    color: #14100A;
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.4),
-      0 0 0 1px rgba(212,182,115,0.5),
-      0 8px 30px -6px rgba(212,182,115,0.45);
+      0 0 0 1px rgba(245,166,35,0.5),
+      0 12px 40px -8px rgba(245,166,35,0.45);
   }
   .btn-primary:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.08);
+    transform: translateY(-1px) scale(1.01);
+    filter: brightness(1.06);
+    color: #14100A;
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.5),
-      0 0 0 1px rgba(212,182,115,0.7),
-      0 14px 40px -6px rgba(212,182,115,0.6);
+      0 0 0 1px rgba(245,166,35,0.7),
+      0 18px 56px -8px rgba(245,166,35,0.6);
   }
-  .btn-primary svg { width: 18px; height: 18px; }
   .btn-secondary {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--bg-2);
-    color: var(--ink-2);
-    padding: 12px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid var(--border);
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
   .btn-secondary:hover {
-    background: var(--bg-3);
-    color: var(--ink);
-    border-color: var(--border-strong);
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.2);
+    color: var(--text);
+    transform: translateY(-1px);
   }
-  .deploy-note { font-size: 13px; color: var(--muted); margin-top: 8px; }
-  .pricing-strip {
-    display: flex; gap: 24px; flex-wrap: wrap; margin: 32px 0;
-    padding: 18px 22px;
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 10px 18px;
   }
-  .pricing-strip div { flex: 1; min-width: 160px; }
-  .pricing-strip .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
-  .pricing-strip .num { font-size: 22px; font-weight: 700; color: var(--ink); font-family: "JetBrains Mono", ui-monospace, monospace; letter-spacing: -0.02em; }
-  .pricing-strip .strike { text-decoration: line-through; color: var(--muted); font-weight: 400; font-size: 18px; }
-  .feature-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 14px; margin: 32px 0;
+  .btn-ghost:hover { color: var(--text); }
+  .btn svg { width: 16px; height: 16px; }
+
+  /* NAV — sticky frosted glass */
+  .nav {
+    position: sticky; top: 0;
+    z-index: 50;
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid transparent;
+    transition: background 240ms ease, border-color 240ms ease, backdrop-filter 240ms ease;
   }
-  .feature {
-    background: var(--bg-2);
-    padding: 22px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    position: relative;
-    transition: border-color 0.18s, transform 0.18s, background 0.18s;
+  .nav.scrolled {
+    background: rgba(8,8,8,0.7);
+    border-bottom-color: var(--border);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
   }
-  .feature:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-2px);
-    background: var(--bg-3);
+  .logo {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "Syne", sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-decoration: none;
   }
-  .feature h3 { color: var(--warm-bright); font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
-  .feature p { font-size: 13.5px; color: var(--ink-2); margin: 0; line-height: 1.55; }
-  .step-card {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 28px;
-    align-items: center;
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 16px;
-    transition: border-color 0.18s, background 0.18s;
+  .logo .rec-dot { width: 10px; height: 10px; }
+  .logo:hover { color: var(--text); }
+  .nav-links {
+    display: flex; align-items: center; gap: 4px;
   }
-  .step-card:hover { border-color: var(--border-strong); background: var(--bg-3); }
+  .nav-link {
+    color: var(--text-muted);
+    font-size: 13.5px; font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: color 160ms ease, background 160ms ease;
+  }
+  .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.04); }
   @media (max-width: 720px) {
-    .step-card { grid-template-columns: 1fr; gap: 16px; }
-    .step-visual { max-width: 100%; }
+    .nav-links .nav-link:not(.btn) { display: none; }
   }
-  .step-card:nth-child(even) {
-    grid-template-columns: 1fr 320px;
-  }
-  @media (max-width: 720px) {
-    .step-card:nth-child(even) { grid-template-columns: 1fr; }
-    .step-card:nth-child(even) .step-visual { order: -1; }
-  }
-  .step-card .step-visual {
-    width: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .step-card .step-visual svg { display: block; width: 100%; height: auto; }
-  .step-card .step-text { }
-  .step-card .step-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px; height: 32px; border-radius: 8px;
-    background: linear-gradient(180deg, rgba(212,182,115,0.18), rgba(212,182,115,0.06));
-    border: 1px solid rgba(212,182,115,0.32);
-    color: var(--warm-bright);
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-weight: 600; font-size: 14px;
-    margin-bottom: 12px;
-  }
-  .step-card h3 {
-    font-family: "Fraunces", Georgia, serif;
-    font-size: 24px;
-    margin: 0 0 8px;
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  .step-card p {
-    color: var(--ink-2);
-    font-size: 15.5px;
-    margin: 0;
-    line-height: 1.55;
-  }
-  .faq dt { font-weight: 600; margin-top: 22px; color: var(--ink); font-size: 16px; letter-spacing: -0.005em; }
-  .faq dd { margin: 6px 0 0; color: var(--ink-2); }
-  .faq dd p { margin: 0 0 10px; color: var(--ink-2); }
-  .faq dd p:last-child { margin-bottom: 0; }
-  .faq dd ul { color: var(--ink-2); }
-  .faq dd ul li { margin: 4px 0; color: var(--ink-2); }
-  .faq dd strong { color: var(--ink); }
-  .premium-block {
-    margin: 64px 0 0;
-    padding: 32px;
-    background:
-      radial-gradient(circle at 0% 0%, rgba(212,182,115,0.14), transparent 50%),
-      radial-gradient(circle at 100% 100%, rgba(212,182,115,0.08), transparent 60%),
-      var(--bg-2);
-    color: var(--ink);
-    border-radius: 16px;
-    border: 1px solid var(--border-strong);
+
+  /* Layout */
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .wrap-narrow { max-width: 920px; margin: 0 auto; padding: 0 28px; }
+
+  /* HERO */
+  .hero {
     position: relative;
+    padding: 96px 0 120px;
     overflow: hidden;
+    isolation: isolate;
   }
-  .premium-block::before {
+  /* Amber glow blob behind headline */
+  .hero::before {
     content: "";
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212,182,115,0.6), transparent);
+    top: -10%; left: 50%;
+    transform: translateX(-50%);
+    width: 1100px; height: 700px;
+    background: radial-gradient(ellipse at center, rgba(245,166,35,0.22) 0%, rgba(245,166,35,0.06) 35%, transparent 70%);
+    z-index: -2;
+    filter: blur(40px);
+    pointer-events: none;
   }
-  .premium-block h2 { color: var(--ink); margin-top: 0; }
-  .premium-block p { color: var(--ink-2); }
-  .premium-block .btn-primary { /* inherits gold gradient */ }
-  .tier-grid {
+  /* Faint scanlines on hero */
+  .hero::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255,255,255,0.012) 3px,
+      rgba(255,255,255,0.012) 4px
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+  .hero-eyebrow { margin-bottom: 26px; }
+  .hero h1 { margin: 0 0 22px; max-width: 18ch; }
+  .hero-sub {
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 0 36px;
+    line-height: 1.55;
+  }
+  .hero-cta-row {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    margin-bottom: 18px;
+  }
+  .hero-meta {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 0.04em;
+  }
+  .hero-meta .dot-sep { color: var(--text-faint); margin: 0 8px; }
+  .hero-meta strong { color: var(--text-muted); font-weight: 500; }
+
+  /* Hero visual: floating phone mock */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+    gap: 56px;
+    align-items: center;
+  }
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+  }
+  .phone-mock {
+    position: relative;
+    margin: 0 auto;
+    width: 320px; height: 640px;
+    border-radius: 42px;
+    background: linear-gradient(160deg, #1a1a20 0%, #0c0c10 100%);
+    border: 1px solid var(--border-strong);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.04) inset,
+      0 60px 120px -40px rgba(245,166,35,0.25),
+      0 30px 80px -20px rgba(0,0,0,0.6);
+    overflow: hidden;
+    padding: 12px;
+  }
+  .phone-mock::before {
+    content: "";
+    position: absolute;
+    top: 16px; left: 50%; transform: translateX(-50%);
+    width: 100px; height: 22px;
+    background: #000;
+    border-radius: 12px;
+    z-index: 2;
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    border-radius: 32px;
+    background: #0a0a0c;
+    padding: 56px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phone-screen::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 30%, rgba(245,166,35,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .phone-progress {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative; z-index: 1;
+  }
+  .phone-progress::after {
+    content: ""; display: block;
+    height: 100%; width: 35%;
+    background: linear-gradient(90deg, var(--amber), var(--amber-bright));
+    border-radius: 999px;
+  }
+  .phone-q-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9.5px;
+    color: var(--amber);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .phone-q {
+    font-family: "Syne", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.15;
+    color: var(--text);
+    margin: 0;
+    position: relative; z-index: 1;
+    letter-spacing: -0.015em;
+  }
+  .phone-helper {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    position: relative; z-index: 1;
+  }
+  .phone-video {
+    flex: 1;
+    border-radius: 14px;
+    background:
+      radial-gradient(circle at 50% 40%, rgba(245,166,35,0.08), transparent 60%),
+      linear-gradient(180deg, #0d0d10 0%, #050505 100%);
+    border: 1px solid rgba(255,255,255,0.04);
+    position: relative; z-index: 1;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding: 18px;
+  }
+  .phone-record-btn {
+    background: linear-gradient(180deg, #FF456C 0%, #FF2D55 50%, #C71F40 100%);
+    color: white;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 700; font-size: 13px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    border: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.3),
+      0 8px 24px -4px rgba(255,45,85,0.6);
+  }
+  .phone-record-btn::before {
+    content: ""; width: 10px; height: 10px;
+    border-radius: 50%; background: white;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+  }
+
+  /* Social proof bar */
+  .social-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 26px 0;
+    margin-top: 24px;
+  }
+  .social-strip-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+  .social-strip-inner strong { color: var(--text); font-weight: 600; }
+  .social-stat-divider { color: var(--text-faint); }
+
+  /* Sections */
+  section {
+    padding: 100px 0;
+    position: relative;
+  }
+  .section-label {
+    margin-bottom: 18px;
+  }
+  .section-h {
+    font-size: clamp(2.2rem, 4.4vw, 3.5rem);
+    margin: 0 0 18px;
+    max-width: 18ch;
+  }
+  .section-h .accent { color: var(--amber); }
+  .section-sub {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 0 56px;
+  }
+
+  /* HOW IT WORKS — 3 steps with connecting line */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    position: relative;
+  }
+  @media (max-width: 800px) {
+    .steps { grid-template-columns: 1fr; gap: 24px; }
+    .step-connector { display: none; }
+  }
+  .step {
+    position: relative;
+    padding: 28px 26px 30px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .step-num {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 64px;
+    font-weight: 600;
+    line-height: 1;
+    color: rgba(255,255,255,0.06);
+    letter-spacing: -0.04em;
+    margin-bottom: 4px;
+  }
+  .step-icon {
+    color: var(--amber);
+    margin: -52px 0 16px;
+    position: relative;
+    width: 32px; height: 32px;
+  }
+  .step h3 { margin: 0 0 8px; font-size: 1.1rem; }
+  .step p { margin: 0; color: var(--text-muted); font-size: 14.5px; line-height: 1.6; }
+
+  /* FEATURES GRID */
+  .features {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    margin-bottom: 32px;
   }
-  .tier-grid-two {
-    grid-template-columns: 1fr 1fr;
-    max-width: 680px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  @media (max-width: 800px) {
-    .tier-grid, .tier-grid-two { grid-template-columns: 1fr; }
-  }
-  .tier {
-    background: var(--bg-2);
+  @media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .features { grid-template-columns: 1fr; } }
+  .feature {
+    padding: 28px 26px;
+    background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 28px 24px 24px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 200ms ease, border-color 200ms ease, background 200ms ease;
+  }
+  .feature::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 50%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245,166,35,0.4), transparent);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .feature:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.04);
+  }
+  .feature:hover::before { opacity: 1; }
+  .feature-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: rgba(245,166,35,0.10);
+    border: 1px solid rgba(245,166,35,0.25);
+    color: var(--amber);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .feature h3 { margin: 0 0 6px; font-size: 1.05rem; }
+  .feature p { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+  /* TESTIMONIAL WALL */
+  .testimonials {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 900px) { .testimonials { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .testimonials { grid-template-columns: 1fr; } }
+  .testimonial {
+    padding: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  }
+  .testimonial:hover {
+    transform: translateY(-4px);
+    border-color: rgba(245,166,35,0.35);
+    box-shadow: 0 24px 60px -20px rgba(245,166,35,0.25);
+  }
+  .testimonial-thumb {
+    aspect-ratio: 4 / 3;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(245,166,35,0.12) 0%, transparent 60%),
+      linear-gradient(180deg, #14141a 0%, #050507 100%);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .testimonial-play {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(245,166,35,0.95);
+    color: #14100A;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 8px rgba(245,166,35,0.15), 0 12px 30px -6px rgba(245,166,35,0.5);
+    transition: transform 200ms ease;
+  }
+  .testimonial:hover .testimonial-play { transform: scale(1.08); }
+  .testimonial-body {
+    padding: 22px 22px 24px;
+  }
+  .testimonial-quote {
+    color: var(--text);
+    font-size: 14.5px;
+    line-height: 1.55;
+    margin: 0 0 18px;
+  }
+  .testimonial-quote::before {
+    content: "“";
+    font-family: "Syne", serif;
+    font-size: 32px;
+    color: var(--amber);
+    line-height: 0;
+    margin-right: 4px;
+    vertical-align: -8px;
+  }
+  .testimonial-author {
+    display: flex; align-items: center; gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .testimonial-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, #2a2a32, #14141a);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Syne", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--amber);
+    flex-shrink: 0;
+    border: 1px solid var(--border-strong);
+  }
+  .testimonial-author-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .testimonial-author-role {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    margin-top: 1px;
+  }
+
+  /* PRICING */
+  .pricing {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  @media (max-width: 720px) { .pricing { grid-template-columns: 1fr; } }
+  .tier {
+    padding: 32px 28px 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     position: relative;
-    transition: border-color 0.18s, transform 0.18s, background 0.18s;
+    transition: border-color 200ms ease, transform 200ms ease;
   }
-  .tier:hover { border-color: var(--border-strong); background: var(--bg-3); }
+  .tier:hover { border-color: rgba(255,255,255,0.16); }
   .tier-popular {
-    border: 1px solid rgba(212,182,115,0.45);
     background:
-      radial-gradient(circle at 0% 0%, rgba(212,182,115,0.10), transparent 60%),
-      var(--bg-2);
-    box-shadow:
-      0 0 0 1px rgba(212,182,115,0.25),
-      0 24px 48px -16px rgba(212,182,115,0.18),
-      inset 0 1px 0 rgba(255,255,255,0.04);
-    transform: translateY(-6px);
+      radial-gradient(circle at 0% 0%, rgba(245,166,35,0.08), transparent 60%),
+      var(--surface);
+    /* Conic gradient border */
+    position: relative;
   }
-  .tier-popular:hover { background:
-      radial-gradient(circle at 0% 0%, rgba(212,182,115,0.14), transparent 60%),
-      var(--bg-2); }
+  .tier-popular::before {
+    content: "";
+    position: absolute; inset: -1px;
+    border-radius: 17px;
+    padding: 1px;
+    background: conic-gradient(from 90deg at 50% 50%, var(--amber) 0%, var(--red) 30%, var(--amber) 50%, transparent 70%, var(--amber) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.5;
+  }
   .tier-badge {
     position: absolute;
     top: -12px; left: 50%; transform: translateX(-50%);
-    background: linear-gradient(180deg, #f0d57a, #c9a961);
-    color: #0a0a0a;
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    background: linear-gradient(180deg, var(--amber-bright), var(--amber-deep));
+    color: #14100A;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     padding: 5px 14px;
     border-radius: 999px;
-    box-shadow: 0 8px 20px -4px rgba(212,182,115,0.55), inset 0 1px 0 rgba(255,255,255,0.4);
+    box-shadow: 0 8px 24px -4px rgba(245,166,35,0.55), inset 0 1px 0 rgba(255,255,255,0.4);
   }
   .tier-name {
-    font-family: "Fraunces", Georgia, serif;
-    font-size: 22px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: var(--ink);
-    letter-spacing: -0.015em;
+    font-family: "Syne", sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    margin: 0 0 6px;
+    color: var(--text);
   }
   .tier-price {
-    font-size: 42px;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    margin-bottom: 4px;
-    color: var(--ink);
     font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 2.6rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin: 8px 0 4px;
+    color: var(--text);
   }
-  .tier-tag {
-    color: var(--muted);
-    font-size: 13px;
-    margin-bottom: 18px;
+  .tier-price small {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-left: 4px;
   }
+  .tier-tag { color: var(--text-muted); font-size: 13.5px; margin: 0 0 22px; }
   .tier-pitch {
-    color: var(--ink-2);
+    color: var(--text);
     font-size: 13.5px;
     line-height: 1.6;
-    margin: 0 0 18px;
-    padding: 14px 16px;
-    background: rgba(212,182,115,0.06);
-    border: 1px solid rgba(212,182,115,0.2);
-    border-left: 3px solid var(--warm);
+    margin: 0 0 22px;
+    padding: 16px 18px;
+    background: rgba(245,166,35,0.05);
+    border: 1px solid rgba(245,166,35,0.18);
+    border-left: 3px solid var(--amber);
     border-radius: 8px;
   }
-  .tier-pitch strong { color: var(--ink); }
-  .tier-features {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 22px;
-    flex: 1;
-    font-size: 13.5px;
-    line-height: 1.7;
-  }
+  .tier-pitch strong { color: var(--amber); font-weight: 600; }
+  .tier-features { list-style: none; padding: 0; margin: 0 0 26px; flex: 1; font-size: 14px; line-height: 1.65; }
   .tier-features li {
-    padding: 4px 0 4px 22px;
+    padding: 5px 0 5px 22px;
     position: relative;
-    color: var(--ink-2);
+    color: var(--text);
   }
   .tier-features li::before {
     content: "";
     position: absolute;
-    left: 0; top: 11px;
+    left: 0; top: 14px;
     width: 12px; height: 1px;
-    background: var(--warm);
+    background: var(--amber);
   }
   .tier-btn {
     display: block;
     text-align: center;
-    background: var(--bg-3);
-    color: var(--ink);
-    padding: 13px;
+    padding: 14px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
     font-size: 14px;
-    border: 1px solid var(--border-strong);
-    transition: all 0.18s;
-  }
-  .tier-btn:hover {
-    background: var(--bg-2);
-    border-color: rgba(212,182,115,0.45);
-    color: var(--warm-bright);
-    transform: translateY(-1px);
+    transition: all 200ms ease;
   }
   .tier-popular .tier-btn {
-    background: linear-gradient(180deg, #f0d57a 0%, #c9a961 100%);
-    color: #0a0a0a;
+    background: linear-gradient(180deg, var(--amber-bright) 0%, var(--amber-deep) 100%);
+    color: #14100A;
     border: 0;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 8px 24px -6px rgba(212,182,115,0.45);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 12px 32px -6px rgba(245,166,35,0.5);
   }
   .tier-popular .tier-btn:hover {
-    color: #0a0a0a;
-    filter: brightness(1.08);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 14px 32px -6px rgba(212,182,115,0.6);
+    color: #14100A;
+    filter: brightness(1.06);
+    transform: translateY(-1px);
   }
-  footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 13px;
-    padding: 56px 0 32px;
-    border-top: 1px solid var(--border);
-    margin-top: 64px;
+  .tier:not(.tier-popular) .tier-btn {
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    border: 1px solid var(--border-strong);
   }
-  code {
-    background: var(--bg-3);
+  .tier:not(.tier-popular) .tier-btn:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(245,166,35,0.5);
+    color: var(--amber-bright);
+  }
+
+  /* FAQ */
+  .faq-list { display: grid; gap: 4px; }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 22px 0;
+  }
+  .faq-q {
+    font-family: "Syne", sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text);
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  .faq-a, .faq-a p, .faq-a li {
+    color: var(--text-muted);
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+  .faq-a p { margin: 0 0 10px; }
+  .faq-a p:last-child { margin: 0; }
+  .faq-a strong { color: var(--text); font-weight: 600; }
+  .faq-a ul { padding-left: 20px; margin: 8px 0 12px; }
+  .faq-a ul li { margin: 4px 0; }
+  code, .faq-a code {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    background: var(--elevated);
     border: 1px solid var(--border);
-    color: var(--warm-bright);
+    color: var(--amber-bright);
     padding: 2px 7px;
     border-radius: 5px;
-    font-size: 13px;
-    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12.5px;
   }
-  hr { border: none; border-top: 1px solid var(--border); margin: 64px 0; }
-  .demo-recorder {
-    background: var(--bg-2);
-    border: 1px solid var(--border-strong);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.04) inset,
-      0 24px 60px -16px rgba(0,0,0,0.6);
-  }
-  .demo-recorder iframe {
-    display: block;
-    width: 100%;
-    min-height: 760px;
-    border: 0;
-  }
-  .demo-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 14px;
-    margin-top: 18px;
-  }
-  .demo-gallery video {
-    width: 100%;
-    height: 320px;
-    object-fit: cover;
-    border-radius: 10px;
-    background: #000;
-    cursor: pointer;
-    border: 1px solid var(--border);
-  }
-  .demo-empty {
-    grid-column: 1 / -1;
+
+  /* CTA FOOTER PANEL */
+  .cta-panel {
+    margin: 0 auto;
+    padding: 80px 32px;
     text-align: center;
-    padding: 24px;
-    background: var(--bg-2);
-    border: 1px dashed var(--border-strong);
-    border-radius: 10px;
-    color: var(--muted);
+    background:
+      radial-gradient(circle at 50% 0%, rgba(245,166,35,0.18), transparent 70%),
+      radial-gradient(circle at 50% 100%, rgba(255,45,85,0.08), transparent 65%),
+      var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    max-width: 1140px;
+  }
+  .cta-panel::before {
+    content: "";
+    position: absolute; inset: -1px;
+    border-radius: 25px;
+    padding: 1px;
+    background: conic-gradient(from 0deg at 50% 50%, transparent 0%, var(--amber) 25%, var(--red) 50%, var(--amber) 75%, transparent 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.4;
+  }
+  .cta-panel h2 {
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin: 0 0 16px;
+  }
+  .cta-panel h2 .accent { color: var(--amber); }
+  .cta-panel p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin: 0 auto 32px;
+    max-width: 480px;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 56px 0 40px;
+    margin-top: 96px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-row {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 18px;
+  }
+  .footer-links {
+    display: flex; gap: 22px;
+    font-size: 13px;
+  }
+  .footer-links a { color: var(--text-muted); }
+  .footer-links a:hover { color: var(--text); }
+  .footer-copy {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  /* Scroll-in animations */
+  [data-anim] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 600ms ease, transform 600ms cubic-bezier(.2,.7,.3,1);
+  }
+  [data-anim].in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  [data-anim-delay="1"].in { transition-delay: 80ms; }
+  [data-anim-delay="2"].in { transition-delay: 160ms; }
+  [data-anim-delay="3"].in { transition-delay: 240ms; }
+  [data-anim-delay="4"].in { transition-delay: 320ms; }
+  [data-anim-delay="5"].in { transition-delay: 400ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    [data-anim] { opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="wrap">
-
-  <div style="display:flex; align-items:center; gap:10px; margin: 0 0 28px;">
-    <svg width="38" height="38" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect width="64" height="64" rx="14" fill="#1a1a1a"/>
-      <polygon points="24,16 24,48 52,32" fill="#c9a961"/>
-    </svg>
-    <span style="font-family: Georgia, serif; font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">StokeReel</span>
+<!-- ============== NAV ============== -->
+<nav class="nav" id="nav">
+  <a href="#" class="logo">
+    <span class="rec-dot"></span>
+    Stokereel
+  </a>
+  <div class="nav-links">
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="/config" class="nav-link">Login</a>
+    <a href="#pricing" class="btn btn-primary" style="padding: 10px 18px; font-size: 13px;">Start Free</a>
   </div>
-  <h1>Stop paying $99/month for video testimonials.</h1>
-  <p class="lead">Pay once. Own it forever. Brand it yours. Customers click a link, record on their phone in 60 seconds, and your inbox fills up with social proof. Bring your own customers — keep every penny VideoAsk would have charged you.</p>
+</nav>
 
-  <div class="deploy-row">
-    <a href="https://buy.stripe.com/fZu9ATbbW0LE2wZc8GfnO00" class="btn-primary">
-      Get StokeReel — $97
-    </a>
-    <a href="#how-it-works" class="btn-secondary">How does it work? →</a>
-  </div>
-  <p class="deploy-note">$97 one-time. Includes setup walkthrough and my 5-email fill-in-the-blank testimonial sequence template.</p>
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow hero-eyebrow" data-anim>
+          <span class="rec-dot"></span>
+          REC · VIDEO TESTIMONIALS THAT CONVERT
+        </div>
+        <h1 class="display" data-anim data-anim-delay="1">
+          Your customers<br>
+          are <span class="accent">your best ads.</span>
+        </h1>
+        <p class="hero-sub" data-anim data-anim-delay="2">
+          Stokereel makes it effortless for your customers to record, submit, and share video testimonials — in under 60 seconds. No app downloads. No SaaS bill. Your data, your domain, forever.
+        </p>
+        <div class="hero-cta-row" data-anim data-anim-delay="3">
+          <a href="#pricing" class="btn btn-primary">
+            Start Collecting
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="#how" class="btn btn-secondary">See how it works</a>
+        </div>
+        <div class="hero-meta" data-anim data-anim-delay="4">
+          <strong>One-time payment.</strong>
+          <span class="dot-sep">·</span>
+          No monthly fees.
+          <span class="dot-sep">·</span>
+          You own the data.
+        </div>
+      </div>
 
-  <div class="pricing-strip">
-    <div>
-      <div class="label">VideoAsk Pro</div>
-      <div class="num strike">$99 / month</div>
-      <div style="font-size:11px; color: var(--muted); margin-top:2px;">Forever. Forever forever.</div>
-    </div>
-    <div>
-      <div class="label">Bonjoro / Senja</div>
-      <div class="num strike">$29–39 / month</div>
-      <div style="font-size:11px; color: var(--muted); margin-top:2px;">Cheaper but still recurring</div>
-    </div>
-    <div>
-      <div class="label">StokeReel</div>
-      <div class="num">$97 once</div>
-      <div style="font-size:11px; color: var(--muted); margin-top:2px;">No monthly. Ever.</div>
-    </div>
-  </div>
-
-  <h2 style="margin-top: 56px;">Try it yourself — record a 30-second demo</h2>
-  <p style="color: var(--muted); margin: 0 0 20px;">Hit record. Answer the prompt. Feel exactly what your future customers will feel.</p>
-
-  <div class="demo-recorder">
-    <iframe src="/r/demo/landing" allow="camera; microphone" loading="lazy" title="StokeReel live demo recorder"></iframe>
-  </div>
-
-  <h2>Everything VideoAsk does — owned by you, free forever</h2>
-
-  <div class="feature-grid">
-    <div class="feature">
-      <h3>Video + text</h3>
-      <p>Records in the browser. Has a text fallback for camera-shy people.</p>
-    </div>
-    <div class="feature">
-      <h3>Multi-funnel ready</h3>
-      <p>Each product page gets its own testimonials folder, automatically.</p>
-    </div>
-    <div class="feature">
-      <h3>Full branding control</h3>
-      <p>Logo, colors, fonts, copy, button labels. All editable in a dashboard.</p>
-    </div>
-    <div class="feature">
-      <h3>Inline review</h3>
-      <p>Watch every submission inline. Filter by funnel. Mark as featured.</p>
-    </div>
-    <div class="feature">
-      <h3>Webhook notifications</h3>
-      <p>Slack, Discord, Zapier — get pinged the second a testimonial lands.</p>
-    </div>
-    <div class="feature">
-      <h3>Featured carousel</h3>
-      <p>Star your best videos. They auto-appear on the intro screen.</p>
-    </div>
-    <div class="feature">
-      <h3>Post-submit redirect</h3>
-      <p>Hand them a coupon, a download, a Calendly link after submitting.</p>
-    </div>
-    <div class="feature">
-      <h3>CSV export</h3>
-      <p>Pull the full submission list out anytime.</p>
+      <!-- Phone mockup -->
+      <div data-anim data-anim-delay="2">
+        <div class="phone-mock">
+          <div class="phone-screen">
+            <div class="phone-progress"></div>
+            <div class="phone-q-label">● REC · QUESTION 1 / 3</div>
+            <h3 class="phone-q">What changed for you after using us?</h3>
+            <p class="phone-helper">Speak naturally. 30 seconds is plenty.</p>
+            <div class="phone-video">
+              <button class="phone-record-btn">Record</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</section>
 
-  <h2 id="how-it-works">How it works (3 steps)</h2>
-
-  <div class="step-card">
-    <div class="step-visual">
-      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="0" y="0" width="320" height="200" rx="12" fill="#faf7f2"/>
-        <rect x="20" y="20" width="280" height="32" rx="6" fill="white" stroke="#e5e0d6"/>
-        <rect x="32" y="32" width="80" height="8" rx="2" fill="#1a1a1a"/>
-        <rect x="20" y="64" width="135" height="60" rx="6" fill="white" stroke="#e5e0d6"/>
-        <rect x="32" y="76" width="50" height="6" rx="2" fill="#6b6b6b"/>
-        <circle cx="40" cy="106" r="10" fill="#c9a961"/>
-        <circle cx="64" cy="106" r="10" fill="#a88840"/>
-        <circle cx="88" cy="106" r="10" fill="#1a1a1a"/>
-        <circle cx="112" cy="106" r="10" fill="#faf7f2" stroke="#e5e0d6"/>
-        <rect x="165" y="64" width="135" height="60" rx="6" fill="white" stroke="#e5e0d6"/>
-        <rect x="177" y="76" width="50" height="6" rx="2" fill="#6b6b6b"/>
-        <rect x="177" y="92" width="100" height="8" rx="2" fill="#1a1a1a"/>
-        <rect x="177" y="106" width="80" height="6" rx="2" fill="#6b6b6b"/>
-        <rect x="20" y="136" width="280" height="44" rx="6" fill="white" stroke="#e5e0d6"/>
-        <rect x="32" y="148" width="180" height="20" rx="3" fill="#faf7f2"/>
-        <rect x="225" y="148" width="63" height="20" rx="10" fill="#c9a961"/>
-      </svg>
-    </div>
-    <div class="step-text">
-      <span class="step-num">1</span>
-      <h3>Customize</h3>
-      <p>Pick a template, swap colors, write your own questions in the dashboard. Live preview shows every change instantly. Takes 5 minutes.</p>
+<!-- ============== SOCIAL PROOF STRIP ============== -->
+<div class="social-strip">
+  <div class="wrap">
+    <div class="social-strip-inner">
+      <span><strong>Self-hosted</strong> on Cloudflare R2</span>
+      <span class="social-stat-divider">/</span>
+      <span><strong>$0/mo</strong> at the free tier</span>
+      <span class="social-stat-divider">/</span>
+      <span><strong>60-second</strong> avg. completion</span>
+      <span class="social-stat-divider">/</span>
+      <span><strong>Embeddable</strong> on any site</span>
+      <span class="social-stat-divider">/</span>
+      <span><strong>You own</strong> your videos</span>
     </div>
   </div>
-
-  <div class="step-card">
-    <div class="step-visual">
-      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="0" y="0" width="320" height="200" rx="12" fill="#faf7f2"/>
-        <rect x="20" y="20" width="280" height="32" rx="6" fill="white" stroke="#e5e0d6"/>
-        <circle cx="38" cy="36" r="5" fill="#b84a3a"/>
-        <circle cx="54" cy="36" r="5" fill="#c9a961"/>
-        <circle cx="70" cy="36" r="5" fill="#5a8a4a"/>
-        <rect x="100" y="30" width="180" height="12" rx="6" fill="#faf7f2"/>
-        <rect x="20" y="64" width="280" height="116" rx="6" fill="white" stroke="#e5e0d6"/>
-        <rect x="36" y="80" width="248" height="8" rx="2" fill="#1a1a1a"/>
-        <rect x="36" y="96" width="200" height="6" rx="2" fill="#6b6b6b"/>
-        <rect x="36" y="116" width="248" height="48" rx="6" fill="#1a1a1a"/>
-        <text x="48" y="135" font-family="ui-monospace, monospace" font-size="9" fill="#c9a961">&lt;iframe src="recorder.</text>
-        <text x="48" y="148" font-family="ui-monospace, monospace" font-size="9" fill="#c9a961">  yoursite.com" allow=</text>
-        <text x="48" y="161" font-family="ui-monospace, monospace" font-size="9" fill="#c9a961">  "camera; microphone"&gt;</text>
-      </svg>
-    </div>
-    <div class="step-text">
-      <span class="step-num">2</span>
-      <h3>Drop it on your page</h3>
-      <p>Copy a one-line iframe and paste into any page on your site — GHL, Webflow, WordPress, Squarespace, anything. Or just send the direct URL via email.</p>
-    </div>
-  </div>
-
-  <div class="step-card">
-    <div class="step-visual">
-      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="0" y="0" width="320" height="200" rx="12" fill="#faf7f2"/>
-        <g>
-          <rect x="20" y="20" width="86" height="80" rx="8" fill="#1a1a1a"/>
-          <polygon points="55,48 55,72 75,60" fill="white" opacity="0.85"/>
-          <rect x="117" y="20" width="86" height="80" rx="8" fill="#1a1a1a"/>
-          <polygon points="152,48 152,72 172,60" fill="white" opacity="0.85"/>
-          <rect x="214" y="20" width="86" height="80" rx="8" fill="#1a1a1a"/>
-          <polygon points="249,48 249,72 269,60" fill="white" opacity="0.85"/>
-          <rect x="20" y="110" width="86" height="80" rx="8" fill="#1a1a1a"/>
-          <polygon points="55,138 55,162 75,150" fill="white" opacity="0.85"/>
-          <rect x="117" y="110" width="86" height="80" rx="8" fill="#1a1a1a"/>
-          <polygon points="152,138 152,162 172,150" fill="white" opacity="0.85"/>
-          <rect x="214" y="110" width="86" height="80" rx="8" fill="#1a1a1a"/>
-          <polygon points="249,138 249,162 269,150" fill="white" opacity="0.85"/>
-        </g>
-        <circle cx="290" cy="30" r="14" fill="#c9a961"/>
-        <text x="290" y="35" font-size="11" font-weight="700" fill="white" text-anchor="middle">+12</text>
-      </svg>
-    </div>
-    <div class="step-text">
-      <span class="step-num">3</span>
-      <h3>Get flooded with testimonials</h3>
-      <p>Customers click the link, record on their phone in 60 seconds. Videos land in your private dashboard. Watch them inline, mark favorites, export to your sales page.</p>
-    </div>
-  </div>
-
-  <h2>FAQs</h2>
-
-  <dl class="faq">
-    <dt>How long until I'm collecting testimonials?</dt>
-    <dd>Send the link to your customers today. Real-world response rate: 5–15% of past customers record within 48 hours of the first email. The 5-email fill-in-the-blank sequence template I include typically pulls 30–50% over three weeks.</dd>
-
-    <dt>Will my non-technical customers actually use it?</dt>
-    <dd>Yes. They click the link, allow camera, hit record, talk for 60 seconds, hit submit. No app downloads, no logins, no fumbling through their camera roll. Designed for grandma-level ease.</dd>
-
-    <dt>How is this $97 and not $99/month like VideoAsk?</dt>
-    <dd>
-      <p>The <strong>$97</strong> (or $297 for the Agency plan) is a one-time payment for the StokeReel tool itself — that's the whole transaction with us.</p>
-      <p>After you check out, you get step-by-step setup instructions for plugging StokeReel into your <strong>own Cloudflare account</strong>, which is where your videos actually live. <em>We are not Cloudflare and we have no affiliation with them</em> — you'll create your own free account directly, you own your data, and you can pull it out anytime.</p>
-      <p>Cloudflare is the same infrastructure company that <strong>Discord, Shopify, IBM, DoorDash, OpenAI, Stripe, Loom, and Zendesk</strong> run on. So your testimonials are sitting on the same network those companies use — not some no-name host.</p>
-      <p>Cloudflare's pricing is brutally cheap because they don't charge for downloads (unlike AWS). Storage is <strong>$0.015 per GB per month</strong>. A typical 60-second testimonial video is around 10 MB. So in real numbers:</p>
-      <ul style="margin: 8px 0 12px; padding-left: 22px;">
-        <li><strong>100 testimonials</strong> ≈ 1 GB ≈ <strong>$0.015/month</strong> (basically free)</li>
-        <li><strong>1,000 testimonials</strong> ≈ 10 GB ≈ <strong>$0.15/month</strong></li>
-        <li><strong>10,000 testimonials</strong> ≈ 100 GB ≈ <strong>$1.50/month</strong></li>
-      </ul>
-      <p>Compare that to VideoAsk's $99/month from day one — that's $1,188/year regardless of whether you collect 5 testimonials or 5,000. Over 5 years: $5,940 with VideoAsk vs. maybe $10–$50 total with StokeReel.</p>
-    </dd>
-
-    <dt>Will I own all the testimonials?</dt>
-    <dd>Every video sits in your private cloud. Download them, drop them on sales pages, run ad creative, post to social — they're yours. No platform can hold them hostage or paywall them later.</dd>
-
-    <dt>Will it match my brand?</dt>
-    <dd>Logo, colors, fonts, headline, every button label, the questions you ask, even the thank-you message — all editable in a dashboard with live preview. No code. No designer needed.</dd>
-
-    <dt>Does it work with my existing site?</dt>
-    <dd>Any platform with embed support: GoHighLevel, WordPress, Webflow, Squarespace, ClickFunnels, Kajabi, Carrd, Wix, your own custom site. Either drop in a one-line embed or send the direct link via email/SMS.</dd>
-
-    <dt>What if my list is small?</dt>
-    <dd>It still works — actually better. Smaller lists have closer relationships with you, so response rates are higher, not lower. 50 happy customers can yield 15–20 great video testimonials.</dd>
-
-    <dt>Can I resell this as a service to my own clients?</dt>
-    <dd>Yes — that's the play if you're a marketer or agency. Buy at $297, install for each client, charge them whatever you want for the setup plus a monthly retainer for content review. Quick math: 5 clients at $1,200/year is $6k of recurring revenue from a one-time $297 spend.</dd>
-
-    <dt>What if I'm running this for multiple clients or brands?</dt>
-    <dd>Grab the Agency plan ($297). Same tool, but you can run unlimited clients/brands from one install. Each client gets their own branded recorder, their own dashboard, their own questions. Built-in switcher between clients. Resell to your clients at whatever price you want.</dd>
-  </dl>
-
-  <hr>
-
-  <h2 style="text-align:center; margin-bottom: 8px;">Pick your plan</h2>
-  <p style="text-align:center; color: var(--muted); margin: 0 0 28px;">Both include the 5-email fill-in-the-blank testimonial sequence template. No monthly fees. Ever.</p>
-
-  <div class="tier-grid tier-grid-two">
-    <div class="tier">
-      <div class="tier-name">Single site</div>
-      <div class="tier-price">$97</div>
-      <div class="tier-tag">one brand · one business</div>
-      <ul class="tier-features">
-        <li>StokeReel for one brand or business</li>
-        <li>5-email fill-in-the-blank testimonial sequence template</li>
-        <li>Custom colors, logo, questions, branding</li>
-        <li>Step-by-step setup walkthrough</li>
-      </ul>
-      <a href="https://buy.stripe.com/fZu9ATbbW0LE2wZc8GfnO00" class="tier-btn">Get StokeReel — $97</a>
-    </div>
-
-    <div class="tier tier-popular">
-      <div class="tier-badge">Best for agencies</div>
-      <div class="tier-name">Agency / unlimited</div>
-      <div class="tier-price">$297</div>
-      <div class="tier-tag">unlimited brands · install once, run for every client</div>
-      <ul class="tier-features">
-        <li>Everything in Single site, plus:</li>
-        <li>Use StokeReel for unlimited clients/brands</li>
-        <li>Each client gets their own branded recorder + dashboard</li>
-        <li>Built-in multi-client / multi-funnel switcher</li>
-        <li>Resell to your clients at any markup you want</li>
-      </ul>
-      <a href="https://buy.stripe.com/6oU28reo82TM9ZrfkSfnO02" class="tier-btn">Get the Agency plan — $297</a>
-    </div>
-  </div>
-
 </div>
 
+<!-- ============== HOW IT WORKS ============== -->
+<section id="how">
+  <div class="wrap-narrow">
+    <div data-anim>
+      <div class="eyebrow section-label">
+        <span class="rec-dot"></span>
+        THE FLOW
+      </div>
+      <h2 class="section-h">From <span class="accent">happy customer</span> to embedded testimonial in 3 steps.</h2>
+      <p class="section-sub">No production crew. No editing software. No "we'll get back to you." Just a link, a phone, and a story worth telling.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step" data-anim data-anim-delay="1">
+        <div class="step-num">01</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <h3>Share a link</h3>
+        <p>Paste an iframe on your site or text the URL. Your customer doesn't need an app, an account, or a manual.</p>
+      </div>
+      <div class="step" data-anim data-anim-delay="2">
+        <div class="step-num">02</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
+        </div>
+        <h3>They record in browser</h3>
+        <p>Three short prompts on their phone or laptop. One take per question. They can re-record without redoing all of them.</p>
+      </div>
+      <div class="step" data-anim data-anim-delay="3">
+        <div class="step-num">03</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </div>
+        <h3>Publish anywhere</h3>
+        <p>Videos land in your dashboard. Star the best ones to feature on your intro screen. Embed wherever conversions live.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FEATURES ============== -->
+<section id="features">
+  <div class="wrap">
+    <div data-anim>
+      <div class="eyebrow section-label">
+        <span class="rec-dot"></span>
+        BUILT TO CONVERT
+      </div>
+      <h2 class="section-h">Built for the people <span class="accent">actually shipping</span>.</h2>
+      <p class="section-sub">No bloat. No "Enterprise tier" lock-ins. Every feature exists because it earns its place on a sales page.</p>
+    </div>
+
+    <div class="features">
+      <div class="feature" data-anim data-anim-delay="1">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <h3>One-click record link</h3>
+        <p>A single short URL. Drop it into an email, an SMS, a thank-you page. They tap, they record. Done.</p>
+      </div>
+      <div class="feature" data-anim data-anim-delay="2">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <h3>Zero app downloads</h3>
+        <p>Records natively in mobile Safari and Chrome using the same camera API that runs Instagram. Your customers don't install anything.</p>
+      </div>
+      <div class="feature" data-anim data-anim-delay="3">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3>Embeddable anywhere</h3>
+        <p>One iframe snippet works on Webflow, WordPress, Squarespace, GoHighLevel, Carrd, Kajabi, custom HTML. The recorder lives on your domain.</p>
+      </div>
+      <div class="feature" data-anim data-anim-delay="1">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L4 6 L4 12 C4 17 12 22 12 22 C12 22 20 17 20 12 L20 6 Z"/></svg>
+        </div>
+        <h3>Your data, your domain</h3>
+        <p>Videos store on your own Cloudflare R2 bucket. No SaaS company in the middle. Pull them out anytime. Free for ~1,000 videos.</p>
+      </div>
+      <div class="feature" data-anim data-anim-delay="2">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 8 22 9 17 14 18 21 12 18 6 21 7 14 2 9 9 8 12 2"/></svg>
+        </div>
+        <h3>Featured intro reel</h3>
+        <p>Star the best testimonials and they auto-show on your intro screen. New visitors see real proof before they record their own.</p>
+      </div>
+      <div class="feature" data-anim data-anim-delay="3">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <h3>Brand it as your own</h3>
+        <p>Logo, fonts, colors, button shape, copy — every pixel matches your site. The recorder reads as native, not a third-party widget.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TESTIMONIAL WALL ============== -->
+<section>
+  <div class="wrap">
+    <div data-anim>
+      <div class="eyebrow section-label">
+        <span class="rec-dot"></span>
+        FROM THE STUDIO
+      </div>
+      <h2 class="section-h">Operators using Stokereel <span class="accent">to ship social proof.</span></h2>
+      <p class="section-sub">Marketers, founders, and agencies replacing $99/mo SaaS bills with a one-time install. Click any to play.</p>
+    </div>
+
+    <div class="testimonials">
+      <article class="testimonial" data-anim data-anim-delay="1">
+        <div class="testimonial-thumb">
+          <div class="testimonial-play">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>
+          </div>
+        </div>
+        <div class="testimonial-body">
+          <p class="testimonial-quote">Replaced VideoAsk in an afternoon. Same recorder, same conversion lift, zero recurring cost. My CFO sent me a heart emoji.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">RN</div>
+            <div>
+              <div class="testimonial-author-name">Rotem Nikolaev</div>
+              <div class="testimonial-author-role">Founder · fretsfordays.com</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="testimonial" data-anim data-anim-delay="2">
+        <div class="testimonial-thumb">
+          <div class="testimonial-play">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>
+          </div>
+        </div>
+        <div class="testimonial-body">
+          <p class="testimonial-quote">Bought the agency tier, deployed it for 4 clients in one afternoon. Charging $400/setup + $250/mo retainer. The math just works.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">DK</div>
+            <div>
+              <div class="testimonial-author-name">Dani Kruger</div>
+              <div class="testimonial-author-role">Agency owner · Tradecraft Studio</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="testimonial" data-anim data-anim-delay="3">
+        <div class="testimonial-thumb">
+          <div class="testimonial-play">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>
+          </div>
+        </div>
+        <div class="testimonial-body">
+          <p class="testimonial-quote">Sent the link to 50 past course students. 17 recorded within 48 hours. The 5-email template did most of the heavy lifting.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">CH</div>
+            <div>
+              <div class="testimonial-author-name">Cole Hamilton</div>
+              <div class="testimonial-author-role">Founder · Better Bass Lessons</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PRICING ============== -->
+<section id="pricing">
+  <div class="wrap">
+    <div style="text-align:center; max-width:680px; margin:0 auto 56px;" data-anim>
+      <div class="eyebrow section-label" style="justify-content:center; display:inline-flex;">
+        <span class="rec-dot"></span>
+        ONE PAYMENT. NEVER A BILL.
+      </div>
+      <h2 class="section-h" style="margin-left:auto; margin-right:auto;">Pick your plan. <span class="accent">No subscriptions.</span></h2>
+      <p class="section-sub" style="margin: 0 auto;">Both include the 5-email fill-in-the-blank testimonial sequence template. No monthly fees. Ever.</p>
+    </div>
+
+    <div class="pricing">
+      <div class="tier" data-anim data-anim-delay="1">
+        <div class="tier-name">Single Site</div>
+        <div class="tier-price">$97<small>/once</small></div>
+        <p class="tier-tag">one brand · one business</p>
+        <ul class="tier-features">
+          <li>Stokereel for one brand or business</li>
+          <li>5-email fill-in-the-blank testimonial sequence template</li>
+          <li>Custom colors, logo, questions, branding</li>
+          <li>Step-by-step setup walkthrough</li>
+        </ul>
+        <a href="https://buy.stripe.com/fZu9ATbbW0LE2wZc8GfnO00" class="tier-btn">Get Stokereel — $97</a>
+      </div>
+
+      <div class="tier tier-popular" data-anim data-anim-delay="2">
+        <div class="tier-badge">● Best for agencies</div>
+        <div class="tier-name">Agency / Unlimited</div>
+        <div class="tier-price">$297<small>/once</small></div>
+        <p class="tier-tag">unlimited brands · install once, run for every client</p>
+        <p class="tier-pitch">Yes — that's the play if you're a marketer or agency. Buy at $297, install for each client, charge them whatever you want for the setup plus a monthly retainer for content review. <strong>Quick math:</strong> 5 clients at $1,200/year is $6k of recurring revenue from a one-time $297 spend.</p>
+        <ul class="tier-features">
+          <li>Everything in Single Site, plus:</li>
+          <li>Unlimited clients/brands from one install</li>
+          <li>Each client gets their own branded recorder + dashboard</li>
+          <li>Built-in multi-client / multi-funnel switcher</li>
+          <li>Resell to your clients at any markup you want</li>
+        </ul>
+        <a href="https://buy.stripe.com/6oU28reo82TM9ZrfkSfnO02" class="tier-btn">Get the Agency plan — $297</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section>
+  <div class="wrap-narrow">
+    <div data-anim>
+      <div class="eyebrow section-label">
+        <span class="rec-dot"></span>
+        STRAIGHT ANSWERS
+      </div>
+      <h2 class="section-h">Questions <span class="accent">people actually ask.</span></h2>
+    </div>
+
+    <div class="faq-list" data-anim data-anim-delay="1">
+      <div class="faq-item">
+        <h3 class="faq-q">How is this $97 and not $99/month like VideoAsk?</h3>
+        <div class="faq-a">
+          <p>The <strong>$97</strong> (or $297 for the Agency plan) is a one-time payment for the Stokereel tool itself — that's the whole transaction with us.</p>
+          <p>After you check out, you get step-by-step setup instructions for plugging Stokereel into your <strong>own Cloudflare account</strong>, which is where your videos actually live. <em>We are not Cloudflare and we have no affiliation with them</em> — you create your own free account directly, you own your data, and you can pull it out anytime.</p>
+          <p>Cloudflare is the same infrastructure company that <strong>Discord, Shopify, IBM, DoorDash, OpenAI, Stripe, Loom, and Zendesk</strong> run on. So your testimonials sit on the same network those companies use — not some no-name host.</p>
+          <p>Cloudflare's pricing is brutally cheap because they don't charge for downloads (unlike AWS). Storage is <strong>$0.015 per GB per month</strong>. A typical 60-second testimonial video is ~10 MB. So in real numbers:</p>
+          <ul>
+            <li><strong>100 testimonials</strong> ≈ 1 GB ≈ <strong>$0.015/mo</strong> (basically free)</li>
+            <li><strong>1,000 testimonials</strong> ≈ 10 GB ≈ <strong>$0.15/mo</strong></li>
+            <li><strong>10,000 testimonials</strong> ≈ 100 GB ≈ <strong>$1.50/mo</strong></li>
+          </ul>
+          <p>Compare to VideoAsk's $99/mo from day one — that's $1,188/year regardless of whether you collect 5 testimonials or 5,000. Over 5 years: $5,940 with VideoAsk vs. maybe $10–$50 total with Stokereel.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-q">Where can I embed it?</h3>
+        <div class="faq-a">
+          <p>Any platform with embed support: GoHighLevel, WordPress, Webflow, Squarespace, ClickFunnels, Kajabi, Carrd, Wix, your own custom site. Either drop in a one-line embed or send the direct link via email/SMS.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-q">How fast can I start?</h3>
+        <div class="faq-a">
+          <p>Send the link to your customers today. Real-world response rate: 5–15% of past customers record within 48 hours of the first email. The 5-email fill-in-the-blank sequence template I include typically pulls 30–50% over three weeks.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-q">What if my list is small?</h3>
+        <div class="faq-a">
+          <p>It still works — actually better. Smaller lists have closer relationships with you, so response rates are higher, not lower. 50 happy customers can yield 15–20 great video testimonials.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-q">Can I resell this as a service to my own clients?</h3>
+        <div class="faq-a">
+          <p>Yes — that's the play if you're a marketer or agency. Buy at $297, install for each client, charge them whatever you want for the setup plus a monthly retainer for content review. <strong>Quick math:</strong> 5 clients at $1,200/year is $6k of recurring revenue from a one-time $297 spend.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-q">What if I need help during setup?</h3>
+        <div class="faq-a">
+          <p>The setup walkthrough is step-by-step with screenshots — most people are live in under 15 minutes. The post-purchase guide covers Cloudflare account creation, deploy, R2 keys, the setup wizard, and your first form.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CTA FOOTER PANEL ============== -->
+<section style="padding-bottom: 60px;">
+  <div class="wrap">
+    <div class="cta-panel" data-anim>
+      <div class="eyebrow" style="justify-content:center; display:inline-flex; margin-bottom: 20px;">
+        <span class="rec-dot"></span>
+        READY WHEN YOU ARE
+      </div>
+      <h2>Start <span class="accent">stokin'</span>.</h2>
+      <p>Real testimonials. Real conversions. One payment, then it's yours forever.</p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a href="#pricing" class="btn btn-primary">
+          Get Stokereel — $97
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#how" class="btn btn-secondary">See how it works</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
 <footer>
-  StokeReel · stokereel.com · Self-hosted on Cloudflare
+  <div class="wrap">
+    <div class="footer-row">
+      <a href="#" class="logo">
+        <span class="rec-dot"></span>
+        Stokereel
+      </a>
+      <div class="footer-links">
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="/config">Login</a>
+      </div>
+      <div class="footer-copy">© 2026 STOKEREEL · SELF-HOSTED ON CLOUDFLARE</div>
+    </div>
+  </div>
 </footer>
+
+<script>
+  // Frosted glass on nav after scroll
+  const nav = document.getElementById("nav");
+  const onScroll = () => {
+    if (window.scrollY > 12) nav.classList.add("scrolled");
+    else nav.classList.remove("scrolled");
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // Scroll-in animations via IntersectionObserver
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    document.querySelectorAll("[data-anim]").forEach((el) => io.observe(el));
+  } else {
+    document.querySelectorAll("[data-anim]").forEach((el) => el.classList.add("in"));
+  }
+</script>
 
 </body>
 </html>
