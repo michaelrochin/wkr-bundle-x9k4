@@ -740,6 +740,10 @@
       // Sync the surrounding page body background to the customer's saved
       // bg color so the recorder card sits on a continuous surface
       // (multi-tenant: light-themed clients still get a light page).
+      // Set --recorder-bg on :root so html + body both inherit the customer's
+      // saved bg. Matches the CSS in serveHostedRecorder which falls back to
+      // #080808 when the var isn't set.
+      try { if (cfg.backgroundColor) document.documentElement.style.setProperty("--recorder-bg", cfg.backgroundColor); } catch {}
       try { if (cfg.backgroundColor) document.body.style.backgroundColor = cfg.backgroundColor; } catch {}
       // Derive an "elevated surface" color for inputs/textareas based on bg luminance
       // (light bg → white inputs; dark bg → slightly-lighter dark inputs).

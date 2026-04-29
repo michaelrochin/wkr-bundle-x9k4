@@ -32,7 +32,7 @@ import LANDING_HTML from "./landing.html";
 // this against UPSTREAM_VERSION_URL to detect when an update is available.
 // Use semantic versioning (MAJOR.MINOR.PATCH).
 // --------------------------------------------------------------
-const STOKEREEL_VERSION = "1.4.3";
+const STOKEREEL_VERSION = "1.4.4";
 const UPSTREAM_VERSION_URL = "https://testimonials.michaelrochin.workers.dev/version";
 
 // --------------------------------------------------------------
@@ -432,11 +432,23 @@ function serveHostedRecorder(origin, client, course) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Share your story · StokeReel</title>
 <style>
-  html, body { margin: 0; padding: 0; }
-  body {
+  /* Recorder is self-contained: html + body fill the viewport with the
+     configured background and own all sizing/scrolling, so the embed
+     iframe is a one-liner with no host-side CSS required. */
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--recorder-bg, #080808);
     min-height: 100vh;
+    /* iOS Safari: 100vh includes the address bar and clips content;
+       100dvh is the dynamic viewport height. Modern browsers use the
+       second declaration; older ones fall back to the first. */
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+  body {
     padding: 24px 0;
-    background-color: #080808;
+    background-color: var(--recorder-bg, #080808);
     background-image:
       radial-gradient(1200px 800px at 0% -10%, rgba(245,166,35,0.12), transparent 55%),
       radial-gradient(900px 600px at 100% 110%, rgba(255,45,85,0.08), transparent 60%);
@@ -5650,8 +5662,10 @@ function updateShareBox() {
     ? "https://" + rawDomain + "/" + encodeURIComponent(course)
     : window.location.origin + "/r/" + encodeURIComponent(client) + "/" + encodeURIComponent(course);
   document.getElementById("shareUrl").value = url;
+  // One-line, zero-config embed. The recorder owns its own background,
+  // sizing, and overflow, so the host page only has to provide a slot.
   document.getElementById("shareIframe").value =
-    '<iframe src="' + url + '" allow="camera; microphone" style="width:100%;min-height:90vh;border:0;display:block;"></iframe>';
+    '<iframe src="' + url + '" allow="camera; microphone" style="width:100%;height:100vh;border:0;display:block;" title="Share your story"></iframe>';
   document.getElementById("shareLabel").textContent =
     courseSelected ? (client + " / " + course) : (client + " / general — pick a funnel above for a specific page");
   // Mirror this URL into the email-templates tab too
