@@ -32,7 +32,7 @@ import LANDING_HTML from "./landing.html";
 // this against UPSTREAM_VERSION_URL to detect when an update is available.
 // Use semantic versioning (MAJOR.MINOR.PATCH).
 // --------------------------------------------------------------
-const STOKEREEL_VERSION = "1.4.4";
+const STOKEREEL_VERSION = "1.4.5";
 const UPSTREAM_VERSION_URL = "https://testimonials.michaelrochin.workers.dev/version";
 
 // --------------------------------------------------------------
@@ -3344,12 +3344,14 @@ const CONFIG_HTML = `<!DOCTYPE html>
   .share-card:hover, .email-card:hover { border-color: var(--d-border-strong) !important; }
   .share-card-head strong { color: var(--d-ink) !important; }
   .share-tag, .share-desc { color: var(--d-muted) !important; }
-  .share-input-row input {
+  .share-input-row input,
+  .share-input-row textarea {
     background: var(--d-bg-3) !important;
     border-color: var(--d-border) !important;
     color: var(--d-ink) !important;
   }
-  .share-input-row input:focus { background: var(--d-bg-4) !important; border-color: var(--d-warm) !important; }
+  .share-input-row input:focus,
+  .share-input-row textarea:focus { background: var(--d-bg-4) !important; border-color: var(--d-warm) !important; }
   .email-subject-line, .email-body-line {
     background: var(--d-bg-3) !important;
     border-color: var(--d-border) !important;
@@ -4569,29 +4571,46 @@ P.S. If you started recording one and got self-conscious and closed the tab — 
         <p class="help-text" id="shareLabel" style="margin: 0 0 16px;"></p>
 
         <div class="share-option" id="shareBox" style="display:none;">
+
+          <!-- Option 1: Direct link (lead, recommended) -->
           <div class="share-card">
             <div class="share-card-head">
               <span class="share-badge">Recommended</span>
-              <strong>Iframe embed</strong>
+              <strong>Option 1 · Direct link</strong>
             </div>
-            <p class="share-desc">Copy this snippet and paste it into a page on your website. The recorder will appear on your page like it was always part of it. Works with every website builder — your visitors stay on your site and never see ours.</p>
+            <p class="share-desc">Paste this anywhere — emails, SMS, social, ads. Always works perfectly.</p>
+            <div class="share-input-row">
+              <input id="shareUrl" type="text" readonly>
+              <button onclick="copyShare('shareUrl', this)" class="secondary">Copy link</button>
+            </div>
+          </div>
+
+          <!-- Option 2: Simple one-line embed -->
+          <div class="share-card">
+            <div class="share-card-head">
+              <strong>Option 2 · Simple embed</strong>
+            </div>
+            <p class="share-desc">One-line iframe. Works on blank pages, landing-page templates, custom HTML pages. If your site has a header/footer that bleeds through, use Option 3 instead.</p>
             <div class="share-input-row">
               <input id="shareIframe" type="text" readonly>
               <button onclick="copyShare('shareIframe', this)" class="secondary">Copy</button>
             </div>
           </div>
 
+          <!-- Option 3: Aggressive full-page-takeover embed -->
           <div class="share-card">
             <div class="share-card-head">
-              <strong>Direct shareable URL</strong>
+              <strong>Option 3 · Aggressive embed</strong>
+              <span class="share-tag">Full-page takeover</span>
             </div>
-            <p class="share-desc">Send via email, SMS, DM, or any text-based channel. Auto-uses your custom domain if one is set.</p>
+            <p class="share-desc">For sites with headers, footers, or themes that interfere. This snippet hides all other page content and gives the recorder full-screen. Best on a dedicated "testimonials" page on your site.</p>
             <div class="share-input-row">
-              <input id="shareUrl" type="text" readonly>
-              <button onclick="copyShare('shareUrl', this)" class="secondary">Copy</button>
+              <textarea id="shareAggressive" readonly rows="6" style="flex:1; resize:vertical; font-family: ui-monospace, 'SF Mono', monospace; font-size: 12px; line-height: 1.5; padding: 10px 14px; border: 1px solid #e5e0d6; border-radius: 8px; background: #faf7f2;"></textarea>
+              <button onclick="copyShare('shareAggressive', this)" class="secondary" style="align-self:flex-start;">Copy</button>
             </div>
           </div>
 
+          <!-- Bonus: short link (kept from previous design) -->
           <div class="share-card">
             <div class="share-card-head">
               <strong>Short link</strong>
@@ -5662,10 +5681,27 @@ function updateShareBox() {
     ? "https://" + rawDomain + "/" + encodeURIComponent(course)
     : window.location.origin + "/r/" + encodeURIComponent(client) + "/" + encodeURIComponent(course);
   document.getElementById("shareUrl").value = url;
-  // One-line, zero-config embed. The recorder owns its own background,
-  // sizing, and overflow, so the host page only has to provide a slot.
+  // Option 2 — one-line, zero-config embed. The recorder owns its own
+  // background, sizing, and overflow, so the host page only has to
+  // provide a slot.
   document.getElementById("shareIframe").value =
     '<iframe src="' + url + '" allow="camera; microphone" style="width:100%;height:100vh;border:0;display:block;" title="Share your story"></iframe>';
+  // Option 3 — aggressive full-page-takeover embed. Hides all other host
+  // content with !important rules + a max-z-index overlay div, and uses
+  // the active client's saved background color so the takeover blends in.
+  const bgInput = document.querySelector('input[data-key="backgroundColor"]');
+  const bgColor = (bgInput && bgInput.value && bgInput.value.trim()) || "#080808";
+  const aggressive = '<style>\\n' +
+    '  html, body { background: ' + bgColor + ' !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; }\\n' +
+    '  body > *:not(.stokereel-host) { display: none !important; }\\n' +
+    '  .stokereel-host { position: fixed; inset: 0; background: ' + bgColor + '; z-index: 2147483647; }\\n' +
+    '  .stokereel-host iframe { width: 100%; height: 100%; border: 0; display: block; background: ' + bgColor + '; }\\n' +
+    '</style>\\n' +
+    '<div class="stokereel-host">\\n' +
+    '  <iframe src="' + url + '" allow="camera; microphone" title="Share your story"></iframe>\\n' +
+    '</div>';
+  const aggressiveEl = document.getElementById("shareAggressive");
+  if (aggressiveEl) aggressiveEl.value = aggressive;
   document.getElementById("shareLabel").textContent =
     courseSelected ? (client + " / " + course) : (client + " / general — pick a funnel above for a specific page");
   // Mirror this URL into the email-templates tab too
