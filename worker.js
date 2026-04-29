@@ -85,6 +85,9 @@ export default {
       if ((url.pathname === "/" || url.pathname === "/start") && request.method === "GET") {
         return new Response(LANDING_HTML, { headers: { "Content-Type": "text/html; charset=utf-8" } });
       }
+      if (url.pathname === "/welcome" && request.method === "GET") {
+        return new Response(WELCOME_HTML, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+      }
       if (url.pathname === "/setup" && request.method === "GET") {
         return new Response(SETUP_HTML, { headers: { "Content-Type": "text/html; charset=utf-8" } });
       }
@@ -3601,5 +3604,261 @@ function showErr(msg) {
 
 checkStatus();
 </script>
+</body>
+</html>`;
+
+// --------------------------------------------------------------
+// Welcome page (post-Stripe-checkout deliverables)
+// Stripe Payment Link redirect URL → https://stokereel.com/welcome
+// --------------------------------------------------------------
+const WELCOME_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome to StokeReel</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1a1a'/%3E%3Cpolygon points='24,16 24,48 52,32' fill='%23c9a961'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --ink: #1a1a1a;
+    --warm: #c9a961;
+    --warm-dark: #a88840;
+    --muted: #6b6b6b;
+    --border: #e5e0d6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--cream); color: var(--ink); line-height: 1.6;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 24px; }
+  .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    background: #dcfce7; color: #166534; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 18px;
+  }
+  h1 { font-family: Georgia, serif; font-size: 42px; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 14px; font-weight: 400; }
+  h2 { font-family: Georgia, serif; font-size: 24px; margin: 40px 0 14px; font-weight: 400; }
+  .lead { font-size: 18px; color: var(--muted); margin: 0 0 36px; }
+  .card {
+    background: white; border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; margin-bottom: 18px;
+  }
+  .card .step-num {
+    display: inline-flex; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--warm); color: white; font-weight: 700; font-size: 14px;
+    align-items: center; justify-content: center; margin-right: 8px; vertical-align: middle;
+  }
+  .card h3 { display: inline; font-size: 18px; font-weight: 600; vertical-align: middle; margin: 0; }
+  .card p { color: var(--muted); margin: 8px 0 14px; font-size: 15px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--ink); color: white; padding: 12px 22px; border-radius: 999px;
+    text-decoration: none; font-size: 15px; font-weight: 600; border: none;
+    cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,0.18); }
+  .btn-secondary {
+    background: transparent; color: var(--muted); border: 1px solid var(--border);
+    box-shadow: none; padding: 10px 16px; font-size: 14px;
+  }
+  .btn-secondary:hover { background: white; color: var(--ink); }
+  .email-block {
+    background: var(--cream); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; margin: 8px 0; font-size: 13px;
+  }
+  .email-meta { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; margin-bottom: 6px; }
+  .email-subject { font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+  .email-body { white-space: pre-wrap; line-height: 1.55; color: #2a2a2a; }
+  .copy-btn {
+    background: white; color: var(--ink); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+    cursor: pointer; margin-top: 8px;
+  }
+  .copy-btn:hover { background: var(--cream); }
+  details summary {
+    cursor: pointer; font-weight: 600; padding: 8px 0;
+    color: var(--warm-dark);
+  }
+  ol { padding-left: 22px; line-height: 1.7; }
+  ol li { margin-bottom: 6px; }
+  code { background: var(--cream); padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div style="display:flex; align-items:center; gap:10px; margin: 0 0 14px;">
+    <svg width="32" height="32" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="64" height="64" rx="14" fill="#1a1a1a"/>
+      <polygon points="24,16 24,48 52,32" fill="#c9a961"/>
+    </svg>
+    <span style="font-family: Georgia, serif; font-size: 18px; font-weight: 600;">StokeReel</span>
+  </div>
+
+  <span class="badge">✓ Payment received</span>
+  <h1>Welcome to StokeReel.</h1>
+  <p class="lead">Here's everything you just bought. The whole setup takes about 15 minutes — work through the cards in order.</p>
+
+  <div class="card">
+    <span class="step-num">1</span>
+    <h3>Deploy StokeReel to your Cloudflare account</h3>
+    <p>One click. Cloudflare auto-creates the worker + R2 bucket inside your own account. You own everything — videos, configs, infrastructure.</p>
+    <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/michaelrochin/video-testimonial-tool" class="btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true"><path d="M12 2L2 19h20L12 2zm0 4l7.53 13H4.47L12 6z"/></svg>
+      Deploy to Cloudflare
+    </a>
+    <details style="margin-top: 14px;">
+      <summary>What happens after I click Deploy</summary>
+      <ol style="margin-top: 10px;">
+        <li>Cloudflare prompts you to sign in (or create a free account)</li>
+        <li>Cloudflare authorizes GitHub access (forks the StokeReel repo into your GitHub)</li>
+        <li>Cloudflare creates a Worker + R2 bucket in your account</li>
+        <li>You get a URL like <code>https://stokereel.&lt;your-subdomain&gt;.workers.dev</code></li>
+        <li>Visit <code>&lt;your-url&gt;/config</code> → setup wizard runs → you enter R2 keys + admin password (~5 min)</li>
+        <li>Dashboard appears. You're live.</li>
+      </ol>
+    </details>
+  </div>
+
+  <div class="card">
+    <span class="step-num">2</span>
+    <h3>Your 5-email testimonial-collection sequence</h3>
+    <p>Send these to your past customers. They're written in a friendly, human voice — no salesy language, no asking for "five stars." Customize the bracketed bits, paste each one into your GHL workflow / email tool / wherever you send email.</p>
+    <p><strong>Suggested cadence:</strong> Day 0 / Day 3 / Day 7 / Day 14 / Day 21 (after their last positive interaction with you).</p>
+
+    <div class="email-block">
+      <div class="email-meta">Email 1 · Day 0</div>
+      <div class="email-subject">Subject: quick favor — 60 seconds?</div>
+      <div class="email-body">Hey [first name],
+
+You bought [product/service] [N weeks/months] ago and you got [their result, e.g. "your first 50 testimonials" / "20 lbs lighter" / etc].
+
+I'd love a quick 60-second video about your experience. It helps me reach more people like you.
+
+The whole thing is one link, three questions, all on your phone:
+
+[YOUR-RECORDER-URL]
+
+Takes a minute. No need to dress up or get fancy. Talk like you'd talk to a friend.
+
+Thanks for being a customer.
+
+— [Your name]</div>
+      <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
+    </div>
+
+    <div class="email-block">
+      <div class="email-meta">Email 2 · Day 3</div>
+      <div class="email-subject">Subject: re: quick favor</div>
+      <div class="email-body">Quick bump in case my last note got buried.
+
+If you can spare 60 seconds today — phone camera, no edits — I'd really appreciate it:
+
+[YOUR-RECORDER-URL]
+
+Even if your answer is short. Even if you mumble. Doesn't have to be polished.
+
+— [Your name]</div>
+      <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
+    </div>
+
+    <div class="email-block">
+      <div class="email-meta">Email 3 · Day 7</div>
+      <div class="email-subject">Subject: [first name], one more ask</div>
+      <div class="email-body">Hey [first name],
+
+Last time I emailed about a video testimonial — wanted to share why this matters.
+
+I just got a message from [name another customer or describe one] who saw a testimonial from someone like you and decided to buy because of it.
+
+Your 60 seconds could be the thing that moves someone off the fence. That's not me being dramatic — that's literally what video testimonials do.
+
+If you have a minute this week:
+
+[YOUR-RECORDER-URL]
+
+Thank you, regardless.
+
+— [Your name]</div>
+      <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
+    </div>
+
+    <div class="email-block">
+      <div class="email-meta">Email 4 · Day 14</div>
+      <div class="email-subject">Subject: [first name], last time I'll bug you</div>
+      <div class="email-body">Promise this is the last reminder.
+
+If you have 60 seconds this week to record a quick video about your experience with [product/service], here's the link:
+
+[YOUR-RECORDER-URL]
+
+If not — totally fine. I'll stop asking after this.
+
+Thanks for everything.
+
+— [Your name]</div>
+      <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
+    </div>
+
+    <div class="email-block">
+      <div class="email-meta">Email 5 · Day 21</div>
+      <div class="email-subject">Subject: no worries either way</div>
+      <div class="email-body">Hey [first name],
+
+Whether or not you got around to recording the testimonial, just wanted to say thanks for being a customer. It means a lot.
+
+If at any point in the next few months you want to drop one in, the link is always live:
+
+[YOUR-RECORDER-URL]
+
+Otherwise, no need to reply. Just wanted to say thanks.
+
+— [Your name]</div>
+      <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="step-num">3</span>
+    <h3>Replace [YOUR-RECORDER-URL] in each email</h3>
+    <p>After you complete the deploy in Step 1 and run the setup wizard, your dashboard shows you a "Share & Embed" panel with three URL options. The <strong>Short link</strong> is best for emails — short, clean, easy to remember.</p>
+    <p>Paste it into each email above where you see <code>[YOUR-RECORDER-URL]</code>. Done.</p>
+  </div>
+
+  <div class="card">
+    <span class="step-num">4</span>
+    <h3>Got stuck? Email me.</h3>
+    <p>30 days of email support is included. If something doesn't work or you need help, reply to your Stripe receipt or message me directly — I'll respond within 24 hours.</p>
+    <p>Bookmark this page in case you need to come back to it. The deploy button and emails will always live here.</p>
+  </div>
+
+  <hr>
+
+  <p style="text-align:center; color: var(--muted); font-size: 13px;">
+    StokeReel · self-hosted · $0/mo forever
+  </p>
+
+</div>
+
+<script>
+function copyEmail(btn) {
+  const block = btn.closest(".email-block");
+  const subject = block.querySelector(".email-subject").textContent;
+  const body = block.querySelector(".email-body").textContent;
+  const text = subject + "\\n\\n" + body;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.textContent = orig; }, 1800);
+  }).catch(() => {
+    btn.textContent = "Copy failed";
+  });
+}
+</script>
+
 </body>
 </html>`;
