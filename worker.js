@@ -905,18 +905,33 @@ async function handleWelcomeAccess(request, env, url) {
   const sessionId = url.searchParams.get("session_id");
   const token = url.searchParams.get("token");
 
-  // Render-time substitution: replace {{DEPLOY_URL}} with the configured deploy URL secret.
-  // Set this via: npx wrangler secret put WELCOME_DEPLOY_URL
-  // Value: https://deploy.workers.cloudflare.com/?url=https://github.com/<your-user>/<random-repo>
-  async function buildHtml() {
+  // Render-time substitution: replace placeholders with configured values.
+  async function buildHtml(tier) {
     const deployUrl = (await getCred(env, "WELCOME_DEPLOY_URL")) || "#deploy-url-not-configured";
-    return WELCOME_HTML.split("{{DEPLOY_URL}}").join(deployUrl);
+    const tierBlock = tier === "agency"
+      ? '<div class="card" style="border:2px solid #c9a961; background: linear-gradient(135deg,#fdfbf6,#f5efe2);">' +
+        '<span class="step-num" style="background:#c9a961;">⭐</span>' +
+        '<h3>You\\'re on the Agency plan</h3>' +
+        '<p>You can run StokeReel for unlimited clients and brands from a single install. Specifically:</p>' +
+        '<ul style="font-size: 14px; line-height: 1.7; margin: 8px 0 0; padding-left: 20px;">' +
+        '<li><strong>One worker, unlimited clients.</strong> Don\\'t deploy a separate worker per client. Use the dashboard\\'s client switcher.</li>' +
+        '<li><strong>Each client = its own slug.</strong> Type a new slug (e.g. <code>fretsfordays</code>) in the dashboard. Their recorder URL becomes <code>recorder.com/r/fretsfordays/&lt;funnel&gt;</code>.</li>' +
+        '<li><strong>Reseller rights are explicit.</strong> Charge your clients whatever you want for setup. Most agencies charge $500–$2,000 per client.</li>' +
+        '<li><strong>The 5-day email sequence below works for every client.</strong> Adapt the bracketed fields per brand.</li>' +
+        '<li><strong>60 days of email support</strong> instead of 30.</li>' +
+        '</ul></div>'
+      : '';
+    return WELCOME_HTML
+      .split("{{DEPLOY_URL}}").join(deployUrl)
+      .split("{{TIER_BLOCK}}").join(tierBlock);
   }
 
   // Owner backdoor for testing/QA — set WELCOME_TOKEN secret to a long random string
   const welcomeToken = await getCred(env, "WELCOME_TOKEN");
   if (welcomeToken && token && token === welcomeToken) {
-    return new Response(await buildHtml(), { headers: { "Content-Type": "text/html; charset=utf-8" } });
+    // Allow ?tier=agency in the test URL to preview the agency block
+    const testTier = url.searchParams.get("tier") === "agency" ? "agency" : "single";
+    return new Response(await buildHtml(testTier), { headers: { "Content-Type": "text/html; charset=utf-8" } });
   }
 
   // Stripe session verification — Stripe redirects with ?session_id={CHECKOUT_SESSION_ID}
@@ -931,7 +946,10 @@ async function handleWelcomeAccess(request, env, url) {
           const session = await stripeRes.json();
           // Accept any session that's been paid (one-time or subscription)
           if (session && (session.payment_status === "paid" || session.payment_status === "no_payment_required")) {
-            return new Response(await buildHtml(), {
+            // Detect tier from amount paid (in cents)
+            // 9700 = $97 (single), 29700 = $297 (agency)
+            const tier = session.amount_total && session.amount_total >= 19700 ? "agency" : "single";
+            return new Response(await buildHtml(tier), {
               headers: {
                 "Content-Type": "text/html; charset=utf-8",
                 "Cache-Control": "private, no-store",
@@ -3774,116 +3792,178 @@ const WELCOME_HTML = `<!DOCTYPE html>
     </details>
   </div>
 
+  {{TIER_BLOCK}}
+
   <div class="card">
     <span class="step-num">2</span>
-    <h3>Your 5-email testimonial-collection sequence</h3>
-    <p>Send these to your past customers. They're written in a friendly, human voice — no salesy language, no asking for "five stars." Customize the bracketed bits, paste each one into your GHL workflow / email tool / wherever you send email.</p>
-    <p><strong>Suggested cadence:</strong> Day 0 / Day 3 / Day 7 / Day 14 / Day 21 (after their last positive interaction with you).</p>
+    <h3>Your 5-day testimonial collection sequence (template)</h3>
+    <p>Fill-in-the-blank email template. Replace anything in <code>[BRACKETS]</code> with your specific program, gift, audience, and voice. Paste each into your email tool / GHL workflow / whatever sends your email.</p>
+    <p><strong>Cadence:</strong> Email 1 immediately, then Days 3 / 6 / 10 / 14.</p>
 
     <div class="email-block">
-      <div class="email-meta">Email 1 · Day 0</div>
-      <div class="email-subject">Subject: quick favor — 60 seconds?</div>
-      <div class="email-body">Hey [first name],
+      <div class="email-meta">Email 1 · The Ask</div>
+      <div class="email-subject">Subject: a small favor (and something I'd like to give you)</div>
+      <div class="email-body">Sent this to a handful of people who went through [PROGRAM NAME] with me.
 
-You bought [product/service] [N weeks/months] ago and you got [their result, e.g. "your first 50 testimonials" / "20 lbs lighter" / etc].
+I'm [OPENING IT AGAIN / LAUNCHING SOMETHING NEW / RUNNING THE NEXT ROUND] [TIMEFRAME, e.g. "next month"]. Before I do, I want to put real student stories on the page. Not testimonials. Stories. From the people who actually went through [THE PROGRAM] and came out the other side [SPECIFIC TRANSFORMATION, e.g. "hearing differently" / "playing with confidence" / "writing copy that converts"].
 
-I'd love a quick 60-second video about your experience. It helps me reach more people like you.
+Yours is one I'd love to have.
 
-The whole thing is one link, three questions, all on your phone:
+If you'll record a short video for me, I want to give you something in return. [DESCRIBE THE GIFT — what it is, why it's valuable, why getting it now is special. 2-3 sentences max.]
 
-[YOUR-RECORDER-URL]
+Yours, on me, as a thank you.
 
-Takes a minute. No need to dress up or get fancy. Talk like you'd talk to a friend.
+I built a little page that makes recording the video easy. You click the link, it walks you through a few short questions, and you record your answer to each one right there on your phone or your computer. No app to download. No video to upload. Nothing to email me. The questions show up on the screen one at a time, so you don't need to remember anything or prepare.
 
-Thanks for being a customer.
+Takes about 60 seconds.
 
-— [Your name]</div>
+[CTA TEXT, e.g. "Record your story →"]
+[RECORDING PAGE URL]
+
+A few things, in case you're worried:
+
+You don't need to look polished. Hold your phone in front of you, prop it on a stack of books if your arm gets tired, and talk like you're [TELLING A FRIEND OVER COFFEE / NATURAL ANALOGY FOR YOUR AUDIENCE].
+
+You can re-record if you flub it. There's a button.
+
+People who hate being on camera do this beautifully. The thing that lands isn't polish. It's you, telling the truth.
+
+Once you've recorded, I'll send the [GIFT NAME] over within a day or two.
+
+[SIGN-OFF],
+[YOUR NAME]
+
+P.S. If you're worried your story isn't impressive enough — that's the story I want most. The quiet wins. [SPECIFIC SMALL-WIN EXAMPLE FROM YOUR WORLD, e.g. "The moment your ear started working" / "The first email that got a reply"]. That's the truth other [YOUR AUDIENCE, e.g. "guitarists" / "founders" / "writers"] need to hear.</div>
       <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
     </div>
 
     <div class="email-block">
-      <div class="email-meta">Email 2 · Day 3</div>
-      <div class="email-subject">Subject: re: quick favor</div>
-      <div class="email-body">Quick bump in case my last note got buried.
+      <div class="email-meta">Email 2 · The Nudge · Day 3</div>
+      <div class="email-subject">Subject: in case you missed it</div>
+      <div class="email-body">Quick one.
 
-If you can spare 60 seconds today — phone camera, no edits — I'd really appreciate it:
+Sent you something a few days ago about recording a short video for me. Sometimes my emails get buried, so I wanted to make sure it didn't slip past you.
 
-[YOUR-RECORDER-URL]
+The short version: I'm putting student stories on the page for [THE NEXT THING]. If you record a quick one — three questions, prompted on your phone, takes a minute — I'll send you [GIFT NAME, with brief reminder of why it's valuable] as a thank you.
 
-Even if your answer is short. Even if you mumble. Doesn't have to be polished.
+Here's the link →
+[RECORDING PAGE URL]
 
-— [Your name]</div>
+The page handles everything. No prep, no upload, no editing.
+
+If you'd rather not, all good. I just didn't want you to miss it.
+
+[SIGN-OFF],
+[YOUR NAME]</div>
       <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
     </div>
 
     <div class="email-block">
-      <div class="email-meta">Email 3 · Day 7</div>
-      <div class="email-subject">Subject: [first name], one more ask</div>
-      <div class="email-body">Hey [first name],
+      <div class="email-meta">Email 3 · The Story · Day 6</div>
+      <div class="email-subject">Subject: [SHORT, INTRIGUING SUBJECT REFERENCING THE STORY, e.g. "something Tom said to me at soundcheck" / "the email that almost got me fired"]</div>
+      <div class="email-body">[OPENING SCENE — 2-4 short paragraphs. A specific moment from your life where someone or something made you confront the exact problem your program solves. Use real names, real places, real dialogue if you have it. Short sentences. One-line paragraphs.]
 
-Last time I emailed about a video testimonial — wanted to share why this matters.
+[THE LESSON LINE — one sentence stating what the moment taught you, written like a punch.]
 
-I just got a message from [name another customer or describe one] who saw a testimonial from someone like you and decided to buy because of it.
+[CONNECT TO YOUR PROGRAM — one sentence: "That [moment / question / lesson] is the whole reason [PROGRAM NAME] exists."]
 
-Your 60 seconds could be the thing that moves someone off the fence. That's not me being dramatic — that's literally what video testimonials do.
+I'm telling you this because I'm asking the people who went through [THE PROGRAM] to share their version of that moment. The thing they couldn't do before, that they can do now. [THE TRANSFORMATION, in their language.]
 
-If you have a minute this week:
+If you have one — and I'd bet you do — would you tell me about it on camera?
 
-[YOUR-RECORDER-URL]
+[CTA →]
+[RECORDING PAGE URL]
 
-Thank you, regardless.
+The page walks you through three short prompts on your phone or computer. About a minute. And as a thank you, I'll send you [GIFT NAME].
 
-— [Your name]</div>
+[SIGN-OFF],
+[YOUR NAME]
+
+P.S. If your moment was a small one — a tiny shift, not a transformation — that's still the story I want. The small ones are usually the most honest.</div>
       <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
     </div>
 
     <div class="email-block">
-      <div class="email-meta">Email 4 · Day 14</div>
-      <div class="email-subject">Subject: [first name], last time I'll bug you</div>
-      <div class="email-body">Promise this is the last reminder.
+      <div class="email-meta">Email 4 · The Honest One · Day 10</div>
+      <div class="email-subject">Subject: the part that's hard to ask for</div>
+      <div class="email-body">I've been sitting on this email for a few days.
 
-If you have 60 seconds this week to record a quick video about your experience with [product/service], here's the link:
+Asking for testimonials feels strange to me. I don't love doing it. Part of me would rather just [DO YOUR WORK / OPEN THE THING / LET THE WORK SPEAK].
 
-[YOUR-RECORDER-URL]
+But here's the thing.
 
-If not — totally fine. I'll stop asking after this.
+When someone is on the fence about [DOING THE PROGRAM] — [SPECIFIC STAKES, e.g. "putting down real money, committing real time, trusting a stranger on the internet"] — what moves them isn't me telling them it works. It's [SOMEONE LIKE THEM], [SPECIFIC IMAGE, e.g. "sitting on their couch, looking into a phone"], saying "I was where you are, and now I'm not."
 
-Thanks for everything.
+That's the only thing that actually moves people. I've seen it.
 
-— [Your name]</div>
+So if you've gotten something out of [THE PROGRAM], and you have a minute, would you record a short one for me?
+
+Here's the link →
+[RECORDING PAGE URL]
+
+Three short prompts on the screen. About a minute. [GIFT NAME] is yours when you're done.
+
+And if you'd rather not — really, truly, no pressure. The fact that you were in the room is enough.
+
+[SIGN-OFF],
+[YOUR NAME]</div>
       <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
     </div>
 
     <div class="email-block">
-      <div class="email-meta">Email 5 · Day 21</div>
-      <div class="email-subject">Subject: no worries either way</div>
-      <div class="email-body">Hey [first name],
+      <div class="email-meta">Email 5 · Last Call · Day 14</div>
+      <div class="email-subject">Subject: closing the window</div>
+      <div class="email-body">Last note on this, then I'll stop asking.
 
-Whether or not you got around to recording the testimonial, just wanted to say thanks for being a customer. It means a lot.
+I'm [WRAPPING UP THE PAGE / FINALIZING THE LAUNCH / FINISHING WHATEVER YOU'RE BUILDING] [SPECIFIC TIMEFRAME, e.g. "this weekend"]. After that, I'm heads-down on [THE NEXT THING] and I won't open this back up.
 
-If at any point in the next few months you want to drop one in, the link is always live:
+If you've been meaning to record one and just haven't sat down to do it — this is the moment.
 
-[YOUR-RECORDER-URL]
+[CTA →]
+[RECORDING PAGE URL]
 
-Otherwise, no need to reply. Just wanted to say thanks.
+A minute on your phone. Three prompts. [GIFT NAME] in your inbox when you're done.
 
-— [Your name]</div>
+If you don't get to it, I understand. Thank you for being part of [THE PROGRAM / THE LAST ROUND / THE WORK] either way. Genuinely.
+
+[SIGN-OFF],
+[YOUR NAME]
+
+P.S. If you started recording one and got self-conscious and closed the tab — happens to almost everyone. Open it back up. The first ten seconds are the hardest. After that you forget the camera is there.</div>
       <button class="copy-btn" onclick="copyEmail(this)">Copy</button>
     </div>
   </div>
 
   <div class="card">
     <span class="step-num">3</span>
-    <h3>Replace [YOUR-RECORDER-URL] in each email</h3>
-    <p>After you complete the deploy in Step 1 and run the setup wizard, your dashboard shows you a "Share & Embed" panel with three URL options. The <strong>Short link</strong> is best for emails — short, clean, easy to remember.</p>
-    <p>Paste it into each email above where you see <code>[YOUR-RECORDER-URL]</code>. Done.</p>
+    <h3>Fields you'll need to fill in</h3>
+    <p>Same fields appear across the sequence. Fill them in once mentally, replace consistently.</p>
+    <ul style="font-size: 14px; line-height: 1.8; margin-top: 12px; padding-left: 20px;">
+      <li><strong>[PROGRAM NAME]</strong> — the cohort/course/program they bought</li>
+      <li><strong>[OPENING IT AGAIN / etc.]</strong> — what you're doing next that needs the testimonials</li>
+      <li><strong>[TIMEFRAME]</strong> — when you need them by</li>
+      <li><strong>[SPECIFIC TRANSFORMATION]</strong> — the actual change your program produces, in plain language</li>
+      <li><strong>[GIFT NAME + DESCRIPTION]</strong> — what you're giving them in exchange. Real value. Don't hype it.</li>
+      <li><strong>[CTA TEXT]</strong> + <strong>[RECORDING PAGE URL]</strong> — appears in every email</li>
+      <li><strong>[SIGN-OFF]</strong> — "Hugs," / "Talk soon," / "—" / whatever fits your voice</li>
+      <li><strong>[YOUR NAME]</strong></li>
+      <li><strong>[YOUR AUDIENCE]</strong> — what you call them ("guitarists" / "founders" / "copywriters")</li>
+      <li><strong>[SMALL-WIN EXAMPLE]</strong> — the specific kind of quiet success you want stories about</li>
+    </ul>
   </div>
 
   <div class="card">
     <span class="step-num">4</span>
+    <h3>Get your recording page URL from the dashboard</h3>
+    <p>After you complete the deploy in Step 1 and run the setup wizard, your dashboard shows a "Share & Embed" panel with three URL options. The <strong>Short link</strong> is best for emails — short, clean, easy to remember.</p>
+    <p>Replace <code>[RECORDING PAGE URL]</code> in each email with that short link.</p>
+  </div>
+
+  <div class="card">
+    <span class="step-num">5</span>
     <h3>Got stuck? Email me.</h3>
-    <p>30 days of email support is included. If something doesn't work or you need help, reply to your Stripe receipt or message me directly — I'll respond within 24 hours.</p>
-    <p>Bookmark this page in case you need to come back to it. The deploy button and emails will always live here.</p>
+    <p>30 days of email support is included (60 days on the Agency plan). If something doesn't work or you need help, reply to your Stripe receipt or message me directly — 24-hour response time.</p>
+    <p>Bookmark this page in case you need to come back. The deploy button and emails will always live here.</p>
   </div>
 
   <hr>
