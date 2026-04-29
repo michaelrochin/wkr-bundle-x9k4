@@ -1940,6 +1940,16 @@ async function refreshFunnelList(client, selectedFunnel) {
   populateFunnelSelect(funnels, selectedFunnel);
 }
 
+function persistSelection() {
+  const clientRaw = document.getElementById("clientName").value;
+  const courseRaw = document.getElementById("courseName").value;
+  const client = clientRaw && clientRaw !== NEW_OPTION ? clientRaw : "";
+  const course = courseRaw && courseRaw !== NEW_OPTION ? courseRaw : "";
+  if (client) localStorage.setItem(STORAGE_CLIENT, client);
+  if (course) localStorage.setItem(STORAGE_COURSE, course);
+  else localStorage.removeItem(STORAGE_COURSE);
+}
+
 function handleClientChange() {
   const sel = document.getElementById("clientName");
   if (sel.value === NEW_OPTION) {
@@ -1961,6 +1971,7 @@ function handleClientChange() {
   refreshFunnelList(sel.value, "");
   updateScopeBadge();
   reloadLivePreview();
+  persistSelection();
 }
 
 function handleFunnelChange() {
@@ -1980,6 +1991,7 @@ function handleFunnelChange() {
   }
   updateScopeBadge();
   reloadLivePreview();
+  persistSelection();
 }
 
 async function loadConfig() {
@@ -2270,6 +2282,10 @@ async function save() {
     currentScope = course ? "course" : "client";
     updateScopeBadge();
     toast(course ? ("Saved override for " + course + ". Live now.") : "Saved brand-wide settings. Live now.");
+    // Persist active selection so reload picks up the same client/course
+    localStorage.setItem(STORAGE_CLIENT, client);
+    if (course) localStorage.setItem(STORAGE_COURSE, course);
+    else localStorage.removeItem(STORAGE_COURSE);
     // Refresh selects so newly created clients/funnels show up next time
     await refreshClientList(client);
     await refreshFunnelList(client, course || "");
