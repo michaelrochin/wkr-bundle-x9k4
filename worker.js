@@ -425,6 +425,7 @@ const DEFAULT_CONFIG = {
   thankYouButtonUrl: "",
   notifyWebhookUrl: "",
   logoUrl: "",
+  customDomain: "",
   questions: [
     { text: "What were you struggling with before you joined?", helper: "What was actually frustrating you?" },
     { text: "What's the biggest thing that's changed for you?", helper: "Be specific — what shifted, what's different now?" },
@@ -1633,6 +1634,31 @@ const CONFIG_HTML = `<!DOCTYPE html>
         <p class="help-text" style="margin: 0 0 12px;">Get pinged on Slack, Discord, Zapier, or any webhook each time a testimonial lands.</p>
         <div class="field"><label>Webhook URL (optional)</label><input type="text" data-key="notifyWebhookUrl" placeholder="https://hooks.slack.com/services/..."></div>
       </div>
+
+      <div class="section">
+        <h2>Custom domain (advanced)</h2>
+        <p class="help-text" style="margin: 0 0 12px;">Use your own domain like <code>recorder.yourdomain.com</code> instead of the long <code>*.workers.dev</code> URL. Customers see the polished URL on your share link + iframe embed.</p>
+        <div class="field">
+          <label>Custom domain (without https://)</label>
+          <input type="text" data-key="customDomain" placeholder="recorder.yourdomain.com">
+        </div>
+        <details style="margin-top:10px;">
+          <summary style="cursor:pointer; color:#a88840; font-size:13px; font-weight:600;">▸ How to set this up (one-time, ~3 min)</summary>
+          <div style="margin-top:10px; padding:14px; background:#fdfbf6; border-left:3px solid #c9a961; border-radius:4px; line-height:1.6; font-size:13px; color:#1a1a1a;">
+            <p style="margin:0 0 8px;"><strong>Pre-req:</strong> The domain you want to use (e.g. <code>yourdomain.com</code>) must be on Cloudflare. If it's not, go to Cloudflare → <em>+ Add a domain</em> first.</p>
+            <ol style="margin:8px 0 0; padding-left:22px;">
+              <li>Open Cloudflare dashboard → <strong>Workers &amp; Pages</strong> → click your worker (e.g. <code>stokereel</code>)</li>
+              <li>Click <strong>Settings</strong> → <strong>Domains &amp; Routes</strong></li>
+              <li>Click <strong>+ Add</strong> → <strong>Custom Domain</strong></li>
+              <li>Enter <code>recorder.yourdomain.com</code> (any subdomain you want) → Add Domain</li>
+              <li>Cloudflare auto-creates the DNS record. Wait ~60 seconds.</li>
+              <li>Come back here, paste the same domain above, hit Save.</li>
+            </ol>
+            <p style="margin:10px 0 0;"><strong>Done.</strong> Your share URLs and iframe embed now use the polished domain. The original <code>*.workers.dev</code> URL keeps working — both serve the same content.</p>
+          </div>
+        </details>
+      </div>
+
       <div class="sub-panel-actions">
         <button onclick="save()">💾 Save changes</button>
         <button onclick="openPreview()" class="secondary">👁 Preview live (no save)</button>
@@ -2238,7 +2264,11 @@ function updateShareBox() {
   const course = courseRaw && courseRaw !== NEW_OPTION ? courseRaw.trim() : "";
   const box = document.getElementById("shareBox");
   if (!client || !course) { box.style.display = "none"; return; }
-  const url = window.location.origin + "/r/" + encodeURIComponent(client) + "/" + encodeURIComponent(course);
+  // Prefer the customer's custom domain if they set one; fall back to *.workers.dev origin
+  const domainInput = document.querySelector('input[data-key="customDomain"]');
+  const rawDomain = (domainInput && domainInput.value || "").trim().replace(/^https?:\/\//, "").replace(/\/+$/, "");
+  const baseUrl = rawDomain ? "https://" + rawDomain : window.location.origin;
+  const url = baseUrl + "/r/" + encodeURIComponent(client) + "/" + encodeURIComponent(course);
   document.getElementById("shareUrl").value = url;
   document.getElementById("shareIframe").value =
     '<iframe src="' + url + '" allow="camera; microphone" style="width:100%;min-height:90vh;border:0;display:block;"></iframe>';
