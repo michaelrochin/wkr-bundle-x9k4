@@ -32,7 +32,7 @@ import LANDING_HTML from "./landing.html";
 // this against UPSTREAM_VERSION_URL to detect when an update is available.
 // Use semantic versioning (MAJOR.MINOR.PATCH).
 // --------------------------------------------------------------
-const STOKEREEL_VERSION = "1.4.7";
+const STOKEREEL_VERSION = "1.4.8";
 const UPSTREAM_VERSION_URL = "https://testimonials.michaelrochin.workers.dev/version";
 
 // --------------------------------------------------------------
@@ -1021,8 +1021,10 @@ async function handleWelcomeAccess(request, env, url) {
           const session = await stripeRes.json();
           // Accept any session that's been paid (one-time or subscription)
           if (session && (session.payment_status === "paid" || session.payment_status === "no_payment_required")) {
-            // Detect tier from amount paid (in cents)
-            // 9700 = $97 (single), 29700 = $297 (agency)
+            // Detect tier from amount paid (in cents).
+            // Launch pricing: $147 (14700) = single. Threshold of 19700
+            // ($197) covers any future agency tier without hard-coding
+            // specific Payment Link IDs.
             const tier = session.amount_total && session.amount_total >= 19700 ? "agency" : "single";
             return new Response(await buildHtml(tier), {
               headers: {
