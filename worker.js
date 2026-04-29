@@ -32,7 +32,7 @@ import LANDING_HTML from "./landing.html";
 // this against UPSTREAM_VERSION_URL to detect when an update is available.
 // Use semantic versioning (MAJOR.MINOR.PATCH).
 // --------------------------------------------------------------
-const STOKEREEL_VERSION = "1.2.1";
+const STOKEREEL_VERSION = "1.3.0";
 const UPSTREAM_VERSION_URL = "https://testimonials.michaelrochin.workers.dev/version";
 
 // --------------------------------------------------------------
@@ -1624,7 +1624,7 @@ const CONFIG_HTML = `<!DOCTYPE html>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1a1a'/%3E%3Cpolygon points='24,16 24,48 52,32' fill='%23c9a961'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
   html, body { height: 100%; }
@@ -3391,6 +3391,310 @@ const CONFIG_HTML = `<!DOCTYPE html>
   /* Sub-panel hint (hidden anyway) */
   /* Question block */
   .question-block { background: var(--d-bg-3) !important; }
+
+  /* ===========================================================
+     OBSIDIAN STUDIO — Welcome message sub-panel ONLY
+     Scoped to .sub-panel.obsidian so the rest of the dashboard
+     keeps its existing layout. Cinematic dark, amber accents,
+     Syne display + DM Sans body + JetBrains Mono labels.
+     =========================================================== */
+  :root {
+    --obs-amber: #F5A623;
+    --obs-amber-bright: #FFB94A;
+    --obs-amber-deep: #C8841C;
+    --obs-red: #FF2D55;
+    --obs-surface: #0F0F12;
+    --obs-elevated: #18181C;
+    --obs-elevated-2: #1F1F25;
+    --obs-text: #F0EEE9;
+    --obs-text-muted: #8A8A95;
+    --obs-text-faint: #4A4A55;
+    --obs-border: rgba(255,255,255,0.06);
+    --obs-border-strong: rgba(255,255,255,0.14);
+    --obs-glow: rgba(245,166,35,0.18);
+  }
+  .sub-panel.obsidian {
+    /* Cinematic black bg with amber radial glow */
+    background:
+      radial-gradient(900px 500px at 0% -10%, rgba(245,166,35,0.10), transparent 55%),
+      radial-gradient(700px 500px at 100% 110%, rgba(245,166,35,0.06), transparent 60%),
+      #080808;
+    margin: -28px -32px 0;
+    padding: 56px 40px 32px;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  /* Faint scanlines on the welcome panel */
+  .sub-panel.obsidian::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255,255,255,0.012) 3px,
+      rgba(255,255,255,0.012) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+  .sub-panel.obsidian > * { position: relative; z-index: 1; }
+  /* Hero block */
+  .sub-panel.obsidian .obs-hero {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--obs-border);
+    max-width: 720px;
+  }
+  /* Eyebrow with REC dot */
+  .sub-panel.obsidian .obs-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "JetBrains Mono", ui-monospace, monospace !important;
+    font-size: 10.5px !important;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--obs-text-muted);
+    margin-bottom: 18px;
+  }
+  .sub-panel.obsidian .obs-rec-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--obs-red);
+    flex-shrink: 0;
+    animation: obs-rec-pulse 2s ease-in-out infinite;
+  }
+  @keyframes obs-rec-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,45,85,0.7); }
+    50% { opacity: 0.55; box-shadow: 0 0 0 5px rgba(255,45,85,0); }
+  }
+  /* Display headline */
+  .sub-panel.obsidian .obs-display {
+    font-family: "Syne", "DM Sans", sans-serif !important;
+    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3rem) !important;
+    line-height: 1 !important;
+    letter-spacing: -0.035em !important;
+    text-transform: uppercase;
+    color: var(--obs-text) !important;
+    margin: 0 0 16px !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+  .sub-panel.obsidian .obs-accent { color: var(--obs-amber) !important; }
+  .sub-panel.obsidian .obs-sub {
+    font-family: "DM Sans", sans-serif !important;
+    font-size: 15px !important;
+    color: var(--obs-text-muted) !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+    max-width: 640px;
+  }
+  /* Section blocks */
+  .sub-panel.obsidian .obs-section {
+    margin: 0 0 36px;
+    padding: 0;
+    border: 0;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 36px;
+    align-items: start;
+  }
+  @media (max-width: 980px) {
+    .sub-panel.obsidian .obs-section { grid-template-columns: 1fr; gap: 18px; }
+  }
+  .sub-panel.obsidian .obs-section-head { padding-top: 4px; }
+  .sub-panel.obsidian .obs-h {
+    font-family: "Syne", "DM Sans", sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 22px !important;
+    text-transform: uppercase;
+    letter-spacing: -0.015em !important;
+    color: var(--obs-text) !important;
+    margin: 0 0 8px !important;
+    line-height: 1.15 !important;
+  }
+  .sub-panel.obsidian .obs-h-meta {
+    font-family: "JetBrains Mono", ui-monospace, monospace !important;
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+    color: var(--obs-text-faint);
+    margin-left: 6px;
+    vertical-align: 2px;
+  }
+  .sub-panel.obsidian .obs-section-sub {
+    font-family: "DM Sans", sans-serif !important;
+    font-size: 13.5px !important;
+    color: var(--obs-text-muted) !important;
+    line-height: 1.55 !important;
+    margin: 0 !important;
+  }
+  /* Card — glassmorphism with thin border */
+  .sub-panel.obsidian .obs-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--obs-border);
+    border-radius: 14px;
+    padding: 24px 26px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Top-edge shimmer */
+  .sub-panel.obsidian .obs-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 40%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245,166,35,0.5), transparent);
+    pointer-events: none;
+  }
+  /* Form fields inside obsidian */
+  .sub-panel.obsidian .field { margin-bottom: 16px; }
+  .sub-panel.obsidian .field:last-child { margin-bottom: 0; }
+  .sub-panel.obsidian .field label {
+    font-family: "JetBrains Mono", ui-monospace, monospace !important;
+    font-size: 10.5px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    color: var(--obs-text-muted) !important;
+    margin-bottom: 8px !important;
+    display: block;
+  }
+  .sub-panel.obsidian .field input,
+  .sub-panel.obsidian .field textarea,
+  .sub-panel.obsidian .field select {
+    background: rgba(0,0,0,0.4) !important;
+    border: 1px solid var(--obs-border-strong) !important;
+    color: var(--obs-text) !important;
+    border-radius: 8px !important;
+    padding: 12px 14px !important;
+    font-family: "DM Sans", sans-serif !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+    transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  }
+  .sub-panel.obsidian .field input::placeholder,
+  .sub-panel.obsidian .field textarea::placeholder { color: var(--obs-text-faint); }
+  .sub-panel.obsidian .field input:focus,
+  .sub-panel.obsidian .field textarea:focus,
+  .sub-panel.obsidian .field select:focus {
+    outline: none !important;
+    border-color: var(--obs-amber) !important;
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.18) !important;
+    background: rgba(0,0,0,0.55) !important;
+  }
+  /* Custom select inside obsidian */
+  .sub-panel.obsidian .obs-select {
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23F5A623' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='1 1.5 6 6.5 11 1.5'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    padding-right: 38px !important;
+    cursor: pointer;
+  }
+  /* Primary button inside obsidian */
+  .sub-panel.obsidian .obs-btn-primary {
+    background: linear-gradient(180deg, #FFB94A 0%, #F5A623 50%, #C8841C 100%) !important;
+    color: #14100A !important;
+    border: 0 !important;
+    padding: 12px 22px !important;
+    font-family: "DM Sans", sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      0 0 0 1px rgba(245,166,35,0.5),
+      0 8px 24px -6px rgba(245,166,35,0.45) !important;
+  }
+  .sub-panel.obsidian .obs-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      0 0 0 1px rgba(245,166,35,0.7),
+      0 14px 36px -6px rgba(245,166,35,0.6) !important;
+  }
+  .sub-panel.obsidian .obs-btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none !important;
+  }
+  /* Pitch callout (preset description) */
+  .sub-panel.obsidian .obs-pitch {
+    background: rgba(245,166,35,0.05) !important;
+    border: 1px solid rgba(245,166,35,0.2) !important;
+    border-left: 3px solid var(--obs-amber) !important;
+    border-radius: 8px !important;
+    padding: 14px 16px !important;
+    color: var(--obs-text-muted) !important;
+    font-family: "DM Sans", sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    margin: 14px 0 0 !important;
+  }
+  /* Preview block override inside obsidian */
+  .sub-panel.obsidian .preview-block {
+    margin-top: 16px;
+    background: rgba(245,166,35,0.04) !important;
+    border: 1px dashed rgba(245,166,35,0.35) !important;
+    border-radius: 12px !important;
+    padding: 22px !important;
+    margin-left: calc(280px + 36px);
+  }
+  @media (max-width: 980px) { .sub-panel.obsidian .preview-block { margin-left: 0; } }
+  .sub-panel.obsidian .preview-block::before {
+    background: var(--obs-amber) !important;
+    color: #14100A !important;
+    font-family: "JetBrains Mono", ui-monospace, monospace !important;
+  }
+  .sub-panel.obsidian .preview-block .pv-headline { color: var(--obs-text) !important; }
+  .sub-panel.obsidian .preview-block .pv-sub,
+  .sub-panel.obsidian .preview-block .pv-q-helper,
+  .sub-panel.obsidian .preview-block .pv-toggle { color: var(--obs-text-muted) !important; }
+  .sub-panel.obsidian .preview-block .pv-input {
+    background: rgba(0,0,0,0.4) !important;
+    border-color: var(--obs-border-strong) !important;
+    color: var(--obs-text-muted) !important;
+  }
+  .sub-panel.obsidian .preview-block .pv-q {
+    background: rgba(0,0,0,0.4) !important;
+    border-color: var(--obs-border-strong) !important;
+  }
+  .sub-panel.obsidian .preview-block .pv-q-text { color: var(--obs-text) !important; }
+  /* Field preview pills under input */
+  .sub-panel.obsidian .field-preview { margin-top: 10px; }
+  /* Wizard nav inside obsidian */
+  .sub-panel.obsidian .wizard-nav {
+    margin: 36px -40px -32px;
+    padding: 24px 40px;
+    border-top: 1px solid var(--obs-border);
+    background: rgba(0,0,0,0.4);
+  }
+  .sub-panel.obsidian .wizard-nav button.next {
+    background: linear-gradient(180deg, #FFB94A 0%, #F5A623 50%, #C8841C 100%) !important;
+    color: #14100A !important;
+    border-radius: 8px !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      0 0 0 1px rgba(245,166,35,0.5),
+      0 8px 24px -6px rgba(245,166,35,0.45) !important;
+  }
+  /* Mobile padding fix */
+  @media (max-width: 720px) {
+    .sub-panel.obsidian { margin: -20px -20px 0; padding: 40px 24px 24px; }
+    .sub-panel.obsidian .wizard-nav { margin: 28px -24px -24px; padding: 20px 24px; }
+    .sub-panel.obsidian .obs-display { font-size: 1.8rem !important; }
+    .sub-panel.obsidian .obs-card { padding: 20px; }
+  }
 </style>
 </head>
 <body>
@@ -3676,29 +3980,44 @@ const CONFIG_HTML = `<!DOCTYPE html>
       <div class="wizard-nav"></div>
       </div><!-- /sub-panel style -->
 
-      <div class="sub-panel" data-sub="welcome">
-      <p class="sub-panel-hint">The first thing people see. Get this right and they'll hit record.</p>
+      <div class="sub-panel obsidian" data-sub="welcome">
+      <header class="obs-hero">
+        <div class="obs-eyebrow"><span class="obs-rec-dot"></span>REC · WELCOME SCREEN</div>
+        <h1 class="obs-display">First impression. <span class="obs-accent">Hit record.</span></h1>
+        <p class="obs-sub">The intro screen is the only thing standing between a happy customer and a video testimonial. Make the headline punch, keep the subhead under two lines, and use a CTA that sounds like something they'd say out loud.</p>
+      </header>
 
-      <div class="section">
-        <h2>🆕 Start from a template (optional)</h2>
-        <p class="help-text" style="margin: 0 0 12px;">Pre-fill the welcome message + 3 questions for your business type. You can edit anything after.</p>
-        <div class="field" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-          <select id="contentPresetSelect" style="flex:1; min-width:260px; padding:10px 12px; border:1px solid #e5e0d6; border-radius:6px; font-size:14px; font-family: inherit;">
-            <option value="">— Start blank —</option>
-          </select>
-          <button onclick="applyContentPreset()" id="applyPresetBtn" disabled>Use this template</button>
+      <section class="obs-section">
+        <div class="obs-section-head">
+          <div class="obs-eyebrow"><span class="obs-rec-dot"></span>STEP 01 · STARTING POINT</div>
+          <h2 class="obs-h">Start from a template <span class="obs-h-meta">(optional)</span></h2>
+          <p class="obs-section-sub">Pre-fill the welcome message + 3 questions for your business type. Edit anything after.</p>
         </div>
-        <p class="help-text" id="contentPresetDescription" style="margin: 10px 0 0; display:none; padding:10px 12px; background:#fdfbf6; border-left:3px solid #c9a961; border-radius:4px; line-height:1.5;"></p>
-        <div id="contentPresetPreview" style="display:none; margin-top:12px;"></div>
-      </div>
+        <div class="obs-card">
+          <div class="field" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:0;">
+            <select id="contentPresetSelect" class="obs-select" style="flex:1; min-width:260px;">
+              <option value="">— Start blank —</option>
+            </select>
+            <button onclick="applyContentPreset()" id="applyPresetBtn" class="obs-btn-primary" disabled>Use this template</button>
+          </div>
+          <p class="obs-pitch" id="contentPresetDescription" style="display:none; margin-top:14px;"></p>
+          <div id="contentPresetPreview" style="display:none; margin-top:14px;"></div>
+        </div>
+      </section>
 
-      <div class="section">
-        <h2>Welcome page</h2>
-        <div class="field"><label>Headline</label><input type="text" data-key="headline"></div>
-        <div class="field"><label>Subheadline</label><textarea data-key="subheadline" rows="3"></textarea></div>
-        <div class="field"><label>Intro CTA button label</label><input type="text" data-key="getStartedLabel" placeholder="Get started"><div class="field-preview" data-preview-for="getStartedLabel"></div></div>
+      <section class="obs-section">
+        <div class="obs-section-head">
+          <div class="obs-eyebrow"><span class="obs-rec-dot"></span>STEP 02 · WRITE THE COPY</div>
+          <h2 class="obs-h">Welcome page</h2>
+          <p class="obs-section-sub">Three fields. Live preview updates as you type.</p>
+        </div>
+        <div class="obs-card">
+          <div class="field"><label>Headline</label><input type="text" data-key="headline" placeholder="Share your story :)"></div>
+          <div class="field"><label>Subheadline</label><textarea data-key="subheadline" rows="3" placeholder="Three quick questions in one short video. Hit record, answer them one after another, tap 'Next question' as you go."></textarea></div>
+          <div class="field" style="margin-bottom:0;"><label>Intro CTA button label</label><input type="text" data-key="getStartedLabel" placeholder="Get started"><div class="field-preview" data-preview-for="getStartedLabel"></div></div>
+        </div>
         <div class="preview-block" id="previewWelcome"></div>
-      </div>
+      </section>
       <div class="wizard-nav"></div>
       </div><!-- /sub-panel welcome -->
 
